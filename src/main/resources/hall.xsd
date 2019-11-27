@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema
+  xmlns="http://cinema.com"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://cinema.com"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified">
+    <!-- with XmlGrid.net Free Online Service http://xmlgrid.net -->
+    <xs:element name="Hall">
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Row" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Row">
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Seat" />
+            </xs:sequence>
+            <xs:attribute name="number" type="xs:int"></xs:attribute>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Seat">
+        <xs:complexType>
+            <xs:attribute name="number" type="xs:int"></xs:attribute>
+            <xs:attribute name="price" type="xs:int"></xs:attribute>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

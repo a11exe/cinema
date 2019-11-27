@@ -5,6 +5,10 @@
          http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
          version="2.4">
 
+    <listener>
+        <listener-class>ru.job4j.cinema.Config</listener-class>
+    </listener>
+
     <servlet-mapping>
         <servlet-name>default</servlet-name>
         <url-pattern>/images/*</url-pattern>

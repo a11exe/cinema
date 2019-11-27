@@ -7,10 +7,10 @@ Build a online booking system for cinema.
 
  * 2 types of users: admin and regular users
  * Admin can see all bookings and  cancel them.
- * Admin can creates the hall configuration in a xml file.
+ * Admin can creates the hall configuration in a hall.xml file.
  * Users can book seat in the hall.
  * After selecting a seat, the user must confirm the booking within 5 minutes.
- * After confirming the reservation, the user receives a booking code
+ * After confirming the reservation, the user receives a booking code.
     
 ## Used technologies
 
@@ -18,8 +18,11 @@ Build a online booking system for cinema.
 + Maven
 + Servlet 4
 + Jetty
-+ liquibase
++ Liquibase
 + DBs: H2
++ log4j
++ Ajax JSON
++ XML
 
 ## Install
 

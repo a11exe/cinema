@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Hall xmlns="http://cinema.com"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://alllexe.com hall.xsd">
+  <Row number="1">
+    <Seat number="1" price="200"></Seat>
+    <Seat number="2" price="200"></Seat>
+    <Seat number="3" price="200"></Seat>
+  </Row>
+  <Row number="2">
+    <Seat number="1" price="200"></Seat>
+    <Seat number="2" price="200"></Seat>
+    <Seat number="3" price="200"></Seat>
+    <Seat number="4" price="200"></Seat>
+    <Seat number="5" price="200"></Seat>
+  </Row>
+  <Row number="3">
+    <Seat number="1" price="200"></Seat>
+    <Seat number="2" price="200"></Seat>
+    <Seat number="3" price="200"></Seat>
+    <Seat number="4" price="200"></Seat>
+    <Seat number="5" price="200"></Seat>
+  </Row>
+  <Row number="4">
+    <Seat number="1" price="200"></Seat>
+    <Seat number="2" price="200"></Seat>
+    <Seat number="3" price="200"></Seat>
+    <Seat number="4" price="200"></Seat>
+    <Seat number="5" price="200"></Seat>
+  </Row>
+  <Row number="5">
+    <Seat number="1" price="500"></Seat>
+    <Seat number="2" price="500"></Seat>
+    <Seat number="3" price="500"></Seat>
+    <Seat number="4" price="500"></Seat>
+    <Seat number="5" price="500"></Seat>
+  </Row>
+</Hall>
