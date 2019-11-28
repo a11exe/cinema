@@ -14,20 +14,20 @@ setInterval(function() {
 function getCellSeat(i) {
   var seatNum = seats[i].number;
   var row = seats[i].row;
-  var seatStr = "<td id =\"seat" + i + "\" class=\"alert alert-secondary\"><input id =\"input" + i + "\" type=\"radio\" value=\"" + seats[i].id + "\" disabled> Ряд "
-      + row + ", Место " + seatNum + "</td>";
+  var seatStr = "<div class=\"col col-sm-2 btn-primary\" id =\"seat" + i + "\" class=\"alert alert-secondary\"><input id =\"input" + i + "\" type=\"radio\" value=\"" + seats[i].id + "\" disabled> Ряд "
+      + row + ", Место " + seatNum + "</div>";
   if (seats[i].state == "BOOKED") {
-    seatStr = "<td id =\"seat" + i + "\" class=\"alert alert-danger\"><input id =\"input" + i + "\" type=\"radio\" value=\"" + seats[i].id + "\" disabled> Ряд "
-        + row + ", Место " + seatNum + "</td>";
+    seatStr = "<div class=\"col col-sm-2 btn-primary\" id =\"seat" + i + "\" class=\"alert alert-danger\"><input id =\"input" + i + "\" type=\"radio\" value=\"" + seats[i].id + "\" disabled> Ряд "
+        + row + ", Место " + seatNum + "</div>";
   }
   if (seats[i].state == "PENDING") {
     selectedSeatIndex = i;
-    seatStr = "<td id =\"seat" + i + "\" class=\"alert alert-warning\"><input id =\"input" + i + "\" type=\"radio\" value=\"" + seats[i].id + "\" disabled> Ряд "
-        + row + ", Место " + seatNum + "</td>";
+    seatStr = "<div class=\"col col-sm-2 btn-primary\" id =\"seat" + i + "\" class=\"alert alert-warning\"><input id =\"input" + i + "\" type=\"radio\" value=\"" + seats[i].id + "\" disabled> Ряд "
+        + row + ", Место " + seatNum + "</div>";
   }
   if (seats[i].state == "FREE") {
-    seatStr = "<td id =\"seat" + i + "\" class=\"alert alert-light\"><input id =\"input" + i + "\" type=\"radio\" name=\"place\" value=\"" + seats[i].id + "\" onclick='startBooking(" + i + ")'> Ряд "
-        + row + ", Место " + seatNum + "</td>";
+    seatStr = "<div class=\"col col-sm-2 btn-primary\" id =\"seat" + i + "\" class=\"alert alert-light\"><input id =\"input" + i + "\" type=\"radio\" name=\"place\" value=\"" + seats[i].id + "\" onclick='startBooking(" + i + ")'> Ряд "
+        + row + ", Место " + seatNum + "</div>";
   }
   return seatStr;
 }
@@ -45,19 +45,18 @@ function loadHall() {
       for (var i = 0; i != seats.length; ++i) {
         if (i == 0) {
           row = seats[i].row;
-          result += "<tr>"
+          result += "<div class=\"row justify-content-md-center\">";
               + "        <th>" + row + "</th>"
         } else if (row != seats[i].row) {
           row = seats[i].row;
-          result += "</tr>\n"
-              + "      <tr>\n"
-              + "        <th>" + row + "</th>"
+          result += "</div>\n"
+              + "      <div class=\"row justify-content-md-center\">\n";
         }
         result += getCellSeat(i);
       }
-      result += "</tr>"
-      var tableBody = document.getElementById("tbody");
-      tableBody.innerHTML = result;
+      result += "</div>"
+      var hall = document.getElementById("hall");
+      hall.innerHTML = result;
       markChecked();
     },
     error: function (jqXHR, textStatus, errorThrown) {

@@ -1,6 +1,6 @@
 package ru.job4j.cinema.persistence;
 
-import ru.job4j.model.Account;
+import java.util.List;
 import ru.job4j.model.Hall;
 import ru.job4j.model.Seat;
 
@@ -16,5 +16,7 @@ public interface Store {
   boolean bookSeat(Seat seat);
 
   boolean confirmBooking(Seat seat);
+
+  void loadHall(List<Seat> seats);
 
 }

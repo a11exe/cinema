@@ -25,6 +25,11 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 <script src="js/cinema.js"></script>
+<style>
+  .seat-background {
+  background: #f99;
+  }
+</style>
 
 <div class="container">
   <div class="row pt-3">
@@ -38,18 +43,10 @@
         <div id="bookTime"></div>
       </div>
     </div>
-    <table class="table table-bordered">
-      <thead>
-      <tr>
-        <th style="width: 120px;">Row / Seat Number</th>
-        <th>1</th>
-        <th>2</th>
-        <th>3</th>
-      </tr>
-      </thead>
-      <tbody id="tbody">
-      </tbody>
-    </table>
+    <div class="container" id ="hall">
+
+    </div>
+
   </div>
   <div class="row float-right">
     <button type="button" class="btn btn-success"

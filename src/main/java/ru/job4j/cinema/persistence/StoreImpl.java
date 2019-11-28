@@ -13,6 +13,8 @@ import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import ru.job4j.model.Account;
 import ru.job4j.model.Hall;
 import ru.job4j.model.Seat;
@@ -25,6 +27,7 @@ import ru.job4j.model.State;
  */
 public class StoreImpl implements Store {
 
+  private static final Logger LOG = LogManager.getLogger(StoreImpl.class);
   private static final BasicDataSource SOURCE = new BasicDataSource();
 
   private final static Store INSTANCE = new StoreImpl();
@@ -49,6 +52,10 @@ public class StoreImpl implements Store {
                   "FROM ACCOUNTS WHERE fio = ? AND phone = ?";
   private static final String SQL_INSERT_ACCOUNT =
           "INSERT INTO ACCOUNTS (fio, phone) VALUES (?, ?)";
+  private static final String SQL_CLEAR_HALL =
+      "TRUNCATE TABLE HALLS";
+  private static final String SQL_INSERT_SEAT =
+      "INSERT INTO HALLS (row, seat_number, price) VALUES (?, ?, ?)";
 
   private StoreImpl() {
     Properties properties = new Properties();
@@ -110,7 +117,7 @@ public class StoreImpl implements Store {
         ));
       }
     } catch (Exception e) {
-      e.printStackTrace();
+      LOG.error("error getHall" + e.getMessage());
     }
     return new Hall(seats);
   }
@@ -147,7 +154,7 @@ public class StoreImpl implements Store {
       connection.commit();
 
     } catch (Exception e) {
-      e.printStackTrace();
+      LOG.error("error bookSeat" + e.getMessage());
     }
 
     return result;
@@ -200,9 +207,36 @@ public class StoreImpl implements Store {
       connection.commit();
 
     } catch (Exception e) {
-      e.printStackTrace();
+      LOG.error("error confirmBooking" + e.getMessage());
     }
 
     return result;
+  }
+
+  @Override
+  public void loadHall(List<Seat> seats) {
+
+    try (Connection connection = SOURCE.getConnection();
+        PreparedStatement seatSt = connection.prepareStatement(SQL_INSERT_SEAT);
+        PreparedStatement clearSt = connection.prepareStatement(SQL_CLEAR_HALL);
+    ) {
+
+      connection.setAutoCommit(false);
+
+      clearSt.executeUpdate();
+
+      for (Seat seat: seats
+      ) {
+        seatSt.setInt(1, seat.getRow());
+        seatSt.setInt(2, seat.getNumber());
+        seatSt.setBigDecimal(3, seat.getPrice());
+        seatSt.executeUpdate();
+      }
+
+      connection.commit();
+
+    } catch (Exception e) {
+      LOG.error("error loadHall" + e.getMessage());
+    }
   }
 }

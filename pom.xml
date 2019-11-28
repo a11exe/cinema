@@ -17,9 +17,9 @@
     <com.h2database.h2.version>1.4.187</com.h2database.h2.version>
     <junit.version>4.12</junit.version>
     <powermock.version>1.6.1</powermock.version>
-    <jackson.core>2.9.8</jackson.core>
+    <jackson.core>2.10.0</jackson.core>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <jetty-version>10.0.0-alpha0</jetty-version>
+    <jetty-version>9.4.14.v20181114</jetty-version>
   </properties>
 
   <dependencies>
@@ -30,6 +30,7 @@
       <version>4.0.1</version>
       <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-dbcp2</artifactId>
@@ -101,6 +102,7 @@
       <artifactId>log4j-core</artifactId>
       <version>2.11.1</version>
     </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-simple</artifactId>
@@ -136,7 +138,7 @@
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
-        <version>9.4.14.v20181114</version>
+        <version>${jetty-version}</version>
       </plugin>
     </plugins>
   </build>

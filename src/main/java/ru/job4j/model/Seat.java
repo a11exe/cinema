@@ -21,6 +21,12 @@ public class Seat {
   public Seat() {
   }
 
+  public Seat(int row, int number, BigDecimal price) {
+    this.row = row;
+    this.number = number;
+    this.price = price;
+  }
+
   public Seat(int id, int row, int number, BigDecimal price, State state) {
     this.id = id;
     this.row = row;

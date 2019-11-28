@@ -49,7 +49,7 @@ public class Account {
       return false;
     }
     Account account = (Account) o;
-    return id == account.id;
+    return id.equals(account.id);
   }
 
   @Override

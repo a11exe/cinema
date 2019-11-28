@@ -1,6 +1,8 @@
 package ru.job4j.cinema.service;
 
-import ru.job4j.model.Account;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Properties;
 import ru.job4j.model.Hall;
 import ru.job4j.model.Seat;
 
@@ -16,5 +18,11 @@ public interface CinemaService {
   void bookSeat(Seat seat);
 
   void confirmBooking(Seat seat);
+
+  List<Seat> readHallConfig(InputStream hallConfigXMLIS);
+
+  void initHall(List<Seat> seats);
+
+  Properties readProperties(InputStream propetiesIS);
 
 }
