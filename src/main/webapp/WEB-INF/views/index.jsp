@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
-
+<html>
 <head>
   <!-- Required meta tags -->
   <meta charset="utf-8">
@@ -25,11 +25,11 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
 <script src="js/cinema.js"></script>
-<style>
-  .seat-background {
-  background: #f99;
-  }
-</style>
+<%--<style>--%>
+  <%--.seat-background {--%>
+  <%--background: #f99;--%>
+  <%--}--%>
+<%--</style>--%>
 
 <div class="container">
   <div class="row pt-3">
@@ -87,6 +87,27 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="modal fade" id="confirmed" tabindex="-1" role="dialog" aria-labelledby="confirmed" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitleConfirmed"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="confirmedResut">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>

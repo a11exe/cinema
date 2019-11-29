@@ -17,6 +17,7 @@ public class Seat {
   private String sessionId;
   private Account account;
   private State state;
+  private String code;
 
   public Seat() {
   }
@@ -77,6 +78,14 @@ public class Seat {
 
   public void setState(State state) {
     this.state = state;
+  }
+
+  public String getCode() {
+    return code;
+  }
+
+  public void setCode(String code) {
+    this.code = code;
   }
 
   @Override

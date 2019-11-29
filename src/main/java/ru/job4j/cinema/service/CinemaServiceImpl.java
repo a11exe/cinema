@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Random;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.logging.log4j.LogManager;
@@ -46,12 +47,15 @@ public class CinemaServiceImpl implements CinemaService {
 
   @Override
   public void bookSeat(Seat seat) {
-    logic.bookSeat(seat);
+    Properties properties = getProperties();
+    logic.bookSeat(seat, Integer.valueOf(properties.getProperty("booking.timeout.seconds")));
   }
 
   @Override
-  public void confirmBooking(Seat seat) {
-    logic.confirmBooking(seat);
+  public boolean confirmBooking(Seat seat) {
+    String code = generateBookingConfirmationCode();
+    seat.setCode(code);
+    return logic.confirmBooking(seat);
   }
 
   @Override
@@ -101,13 +105,27 @@ public class CinemaServiceImpl implements CinemaService {
   }
 
   @Override
-  public Properties readProperties(InputStream propetiesIS) {
+  public Properties readProperties(InputStream propertiesIS) {
     try {
-      properties.load(propetiesIS);
-      LOG.info("booking timout: " + properties.getProperty("booking.timeout.seconds"));
+      properties.load(propertiesIS);
+      LOG.info("booking timeout: " + properties.getProperty("booking.timeout.seconds"));
     } catch (IOException e) {
       LOG.error("error loading properties");
     }
     return properties;
+  }
+
+  @Override
+  public Properties getProperties() {
+    return properties;
+  }
+
+  private String generateBookingConfirmationCode() {
+
+    Random rnd = new Random();
+    int number = rnd.nextInt(999999);
+
+    // this will convert any number sequence into 6 character.
+    return String.format("%06d", number);
   }
 }

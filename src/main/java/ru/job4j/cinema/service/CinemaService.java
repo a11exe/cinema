@@ -17,12 +17,14 @@ public interface CinemaService {
 
   void bookSeat(Seat seat);
 
-  void confirmBooking(Seat seat);
+  boolean confirmBooking(Seat seat);
 
   List<Seat> readHallConfig(InputStream hallConfigXMLIS);
 
   void initHall(List<Seat> seats);
 
-  Properties readProperties(InputStream propetiesIS);
+  Properties readProperties(InputStream propertiesIS);
+
+  Properties getProperties();
 
 }

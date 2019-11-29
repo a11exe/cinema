@@ -22,7 +22,7 @@ import ru.job4j.model.Seat;
  */
 public class BookJsonServlet extends HttpServlet {
 
-  CinemaService service = CinemaServiceImpl.getInstance();
+  private final CinemaService service = CinemaServiceImpl.getInstance();
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)

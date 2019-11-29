@@ -17,7 +17,7 @@ import ru.job4j.model.Seat;
 public class Config implements ServletContextListener {
 
   private static final Logger LOG = LogManager.getLogger(Config.class);
-  CinemaService service = CinemaServiceImpl.getInstance();
+  private final CinemaService service = CinemaServiceImpl.getInstance();
 
   public void contextInitialized(ServletContextEvent event) {
     // Webapp startup.

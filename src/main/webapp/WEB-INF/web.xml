@@ -35,6 +35,16 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>PropJsonServlet</servlet-name>
+        <servlet-class>ru.job4j.cinema.controller.PropJsonServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>PropJsonServlet</servlet-name>
+        <url-pattern>/prop</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>HallJsonServlet</servlet-name>
         <servlet-class>ru.job4j.cinema.controller.HallJsonServlet</servlet-class>
         <load-on-startup>2</load-on-startup>

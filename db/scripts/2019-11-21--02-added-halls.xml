@@ -16,6 +16,7 @@
       <column name="BOOKED_UNTIL" type="TIMESTAMP"/>
       <column name="SESSION_ID" type="VARCHAR(255)"/>
       <column name="ACCOUNT_ID" type="INT"/>
+      <column name="CODE" type="VARCHAR(6)"/>
     </createTable>
     <addNotNullConstraint columnDataType="INT" columnName="ID" tableName="HALLS" />
     <addPrimaryKey tableName="HALLS" columnNames="ID"/>

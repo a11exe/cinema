@@ -1,37 +1,30 @@
-
-$(document).ready(function () {
-  loadHall();
-});
-
-
 var seats;
 var selectedSeatIndex = "";
+var bookingTimeOutSec;
+
+$(document).ready(function () {
+  loadProperties();
+  loadHall();
+});
 
 setInterval(function() {
   loadHall();
 } ,10000);
 
-function getCellSeat(i) {
-  var seatNum = seats[i].number;
-  var row = seats[i].row;
-  var seatStr = "<div class=\"col col-sm-2 btn-primary\" id =\"seat" + i + "\" class=\"alert alert-secondary\"><input id =\"input" + i + "\" type=\"radio\" value=\"" + seats[i].id + "\" disabled> Ряд "
-      + row + ", Место " + seatNum + "</div>";
-  if (seats[i].state == "BOOKED") {
-    seatStr = "<div class=\"col col-sm-2 btn-primary\" id =\"seat" + i + "\" class=\"alert alert-danger\"><input id =\"input" + i + "\" type=\"radio\" value=\"" + seats[i].id + "\" disabled> Ряд "
-        + row + ", Место " + seatNum + "</div>";
-  }
-  if (seats[i].state == "PENDING") {
-    selectedSeatIndex = i;
-    seatStr = "<div class=\"col col-sm-2 btn-primary\" id =\"seat" + i + "\" class=\"alert alert-warning\"><input id =\"input" + i + "\" type=\"radio\" value=\"" + seats[i].id + "\" disabled> Ряд "
-        + row + ", Место " + seatNum + "</div>";
-  }
-  if (seats[i].state == "FREE") {
-    seatStr = "<div class=\"col col-sm-2 btn-primary\" id =\"seat" + i + "\" class=\"alert alert-light\"><input id =\"input" + i + "\" type=\"radio\" name=\"place\" value=\"" + seats[i].id + "\" onclick='startBooking(" + i + ")'> Ряд "
-        + row + ", Место " + seatNum + "</div>";
-  }
-  return seatStr;
+function loadProperties() {
+  $.ajax({
+    url: "/prop",
+    type: 'GET',
+    cache: false,
+    success: function (data) {
+      debugger;
+      bookingTimeOutSec = data.timeout;
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      console.log("Error... " + textStatus + "        " + errorThrown);
+    },
+  });
 }
-
 
 function loadHall() {
   $.ajax({
@@ -65,8 +58,28 @@ function loadHall() {
   });
 }
 
+function getCellSeat(i) {
+  var seatNum = seats[i].number;
+  var row = seats[i].row;
+  var seatStr = "<div class=\"col col-sm-2 \" id =\"seat" + i + "\" class=\"alert alert-secondary\"><input id =\"input" + i + "\" type=\"radio\" value=\"" + seats[i].id + "\" disabled> Ряд "
+      + row + ", Место " + seatNum + "</div>";
+  if (seats[i].state == "BOOKED") {
+    seatStr = "<div class=\"col col-sm-2 \" id =\"seat" + i + "\" class=\"alert alert-danger\"><input id =\"input" + i + "\" type=\"radio\" value=\"" + seats[i].id + "\" disabled> Ряд "
+        + row + ", Место " + seatNum + "</div>";
+  }
+  if (seats[i].state == "PENDING") {
+    selectedSeatIndex = i;
+    seatStr = "<div class=\"col col-sm-2 \" id =\"seat" + i + "\" class=\"alert alert-warning\"><input id =\"input" + i + "\" type=\"radio\" value=\"" + seats[i].id + "\" disabled> Ряд "
+        + row + ", Место " + seatNum + "</div>";
+  }
+  if (seats[i].state == "FREE") {
+    seatStr = "<div class=\"col col-sm-2 \" id =\"seat" + i + "\" class=\"alert alert-light\"><input id =\"input" + i + "\" type=\"radio\" name=\"place\" value=\"" + seats[i].id + "\" onclick='startBooking(" + i + ")'> Ряд "
+        + row + ", Место " + seatNum + "</div>";
+  }
+  return seatStr;
+}
+
 function markChecked() {
-  debugger
   if (selectedSeatIndex !== "") {
     selectedSeat = seats[selectedSeatIndex];
     if (selectedSeat.state = "PENDING") {
@@ -75,7 +88,7 @@ function markChecked() {
       $(cell).removeClass("alert-light").removeClass("alert-warning").addClass("alert-success");
       var input = document.getElementById("input" + selectedSeatIndex);
       $(input).prop("checked", true);
-      selectedSeatEl.innerHTML = "Выбрано. Ряд: " + selectedSeat.row + " место: " + selectedSeat.number;
+      selectedSeatEl.innerHTML = "Selected. Row: " + selectedSeat.row + " seat: " + selectedSeat.number;
     }
   }
 }
@@ -87,8 +100,8 @@ function startBooking(id) {
     $(cellPrev).removeClass("alert-success").addClass("alert-light");
   }
   selectedSeatIndex = id;
-  seconds = 300;
-  countdownTimer = setInterval('secondPassed()', 1000);
+  timeOutSec = bookingTimeOutSec;
+  countdownTimer = setInterval('bookingTimer()', 1000);
   var seat = seats[selectedSeatIndex];
   $.ajax({
     url: "/book",
@@ -133,31 +146,37 @@ function confirmBooking() {
     contentType: 'application/json;charset=UTF-8',
     data: JSON.stringify(seat),
     success: function (data) {
+      showConfirmationCode("Your booking code<br><b>" + data.code + "</b>");
     },
     error: function (jqXHR, textStatus, errorThrown) {
       selectedSeatIndex = "";
       console.log("Error... " + textStatus + "        " + errorThrown);
+      showConfirmationCode("<b>booking failed</b>");
     },
   })
   loadHall();
 }
 
-var seconds = 300; //**change 120 for any number you want, it's the seconds **//
-function secondPassed() {
-  var minutes = Math.round((seconds - 30)/60);
-  var remainingSeconds = seconds % 60;
+function showConfirmationCode(data) {
+  var confirmedResult = document.getElementById("confirmedResut");
+  confirmedResult.innerHTML = data;
+  $('#confirmed').modal('show');
+  loadHall();
+}
+
+function bookingTimer() {
+  var minutes = Math.round((timeOutSec - 30)/60);
+  var remainingSeconds = timeOutSec % 60;
   if (remainingSeconds < 10) {
     remainingSeconds = "0" + remainingSeconds;
   }
   document.getElementById('bookTime').innerHTML = "Booking will be canceled after <span id=\"countdown\" class=\"timer\"></span>";
   document.getElementById('countdown').innerHTML = minutes + ":" + remainingSeconds;
-  if (seconds == 0) {
+  if (timeOutSec == 0) {
     clearInterval(countdownTimer);
     document.getElementById('countdown').innerHTML = "Booking canceled";
   } else {
-    seconds--;
+    timeOutSec--;
   }
 
 }
-
-var sessionId = $.cookie("sessionId");

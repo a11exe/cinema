@@ -13,7 +13,7 @@ public interface Store {
 
   Hall getHall(String sessionId);
 
-  boolean bookSeat(Seat seat);
+  boolean bookSeat(Seat seat, int timeOutSec);
 
   boolean confirmBooking(Seat seat);
 

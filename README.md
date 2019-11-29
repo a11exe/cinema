@@ -32,7 +32,7 @@ Build a online booking system for cinema.
 
     mvn clean install jetty:run
 
-## Credentionals
+## Credentials
 DB connection
 + JDBC URL: jdbc:h2:file:~/cinema
 + User: sa, password: zD5z6Wx

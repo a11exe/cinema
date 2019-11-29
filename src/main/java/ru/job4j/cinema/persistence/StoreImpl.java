@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.job4j.model.Account;
 import ru.job4j.model.Hall;
 import ru.job4j.model.Seat;
 import ru.job4j.model.State;
@@ -43,7 +42,7 @@ public class StoreImpl implements Store {
           "UPDATE HALLS SET session_id = ?, booked_until = ? " +
           "WHERE session_id = ? AND account_id is NULL";
   private static final String SQL_CONFIRM_BOOKING =
-          "UPDATE HALLS SET account_id = ? " +
+          "UPDATE HALLS SET account_id = ?, code = ? " +
           "WHERE row = ? AND seat_number = ? " +
           "AND ((session_id = ? OR session_id is NULL) OR booked_until <= ?) " +
           "AND account_id is NULL";
@@ -123,12 +122,11 @@ public class StoreImpl implements Store {
   }
 
   @Override
-  public boolean bookSeat(Seat seat) {
+  public boolean bookSeat(Seat seat, int timeOutSec) {
 
     boolean result = false;
-    int delayMinutes = 5;
     Timestamp book_until = new Timestamp(System.currentTimeMillis());
-    book_until.setTime(book_until.getTime() + TimeUnit.MINUTES.toMillis(delayMinutes));
+    book_until.setTime(book_until.getTime() + TimeUnit.SECONDS.toMillis(timeOutSec));
 
     try (Connection connection = SOURCE.getConnection();
         PreparedStatement cancelBookSt = connection.prepareStatement(SQL_CANCEL_BOOKING);
@@ -197,10 +195,11 @@ public class StoreImpl implements Store {
       seat.getAccount().setId(accountId);
 
       confirmSt.setInt(1, seat.getAccount().getId());
-      confirmSt.setInt(2, seat.getRow());
-      confirmSt.setInt(3, seat.getNumber());
-      confirmSt.setString(4, seat.getSessionId());
-      confirmSt.setTimestamp(5, new Timestamp(System.currentTimeMillis()));
+      confirmSt.setString(2, seat.getCode());
+      confirmSt.setInt(3, seat.getRow());
+      confirmSt.setInt(4, seat.getNumber());
+      confirmSt.setString(5, seat.getSessionId());
+      confirmSt.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
 
       result = (confirmSt.executeUpdate() > 0);
 
@@ -218,7 +217,7 @@ public class StoreImpl implements Store {
 
     try (Connection connection = SOURCE.getConnection();
         PreparedStatement seatSt = connection.prepareStatement(SQL_INSERT_SEAT);
-        PreparedStatement clearSt = connection.prepareStatement(SQL_CLEAR_HALL);
+        PreparedStatement clearSt = connection.prepareStatement(SQL_CLEAR_HALL)
     ) {
 
       connection.setAutoCommit(false);

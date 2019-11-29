@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  */
 public class ConfirmBookJsonServlet extends HttpServlet {
 
-  CinemaService service = CinemaServiceImpl.getInstance();
+  private final CinemaService service = CinemaServiceImpl.getInstance();
 
   @Override
   protected void doPost(HttpServletRequest req, HttpServletResponse resp)
@@ -43,6 +43,14 @@ public class ConfirmBookJsonServlet extends HttpServlet {
     }
     seat.setSessionId(sessionId);
 
-    service.confirmBooking(seat);
+    if (service.confirmBooking(seat)) {
+      String jsonInString = mapper.writeValueAsString(seat);
+      resp.setContentType("application/json");
+      resp.setCharacterEncoding("UTF-8");
+      resp.getWriter().write(jsonInString);
+      resp.getWriter().flush();
+    } else {
+      resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    }
   }
 }

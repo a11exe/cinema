@@ -19,7 +19,7 @@ import ru.job4j.model.Hall;
  */
 public class HallJsonServlet extends HttpServlet {
 
-  CinemaService service = CinemaServiceImpl.getInstance();
+  private final CinemaService service = CinemaServiceImpl.getInstance();
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
