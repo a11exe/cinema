@@ -16,6 +16,12 @@ public class Account {
   public Account() {
   }
 
+  public Account(Integer id, String name, String phone) {
+    this.id = id;
+    this.name = name;
+    this.phone = phone;
+  }
+
   public int getId() {
     return id;
   }

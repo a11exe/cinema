@@ -50,7 +50,7 @@
   </div>
   <div class="row float-right">
     <button type="button" class="btn btn-success"
-            aria-pressed="true" data-toggle="modal" data-target="#booking" onclick="addBookingInfo()">Booking</button>
+            aria-pressed="true" data-toggle="modal" data-target="#booking" onclick="addBookingInfo()">Book</button>
   </div>
 </div>
 

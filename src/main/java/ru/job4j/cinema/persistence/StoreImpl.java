@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.job4j.model.Account;
 import ru.job4j.model.Hall;
 import ru.job4j.model.Seat;
 import ru.job4j.model.State;
@@ -55,6 +56,11 @@ public class StoreImpl implements Store {
       "TRUNCATE TABLE HALLS";
   private static final String SQL_INSERT_SEAT =
       "INSERT INTO HALLS (row, seat_number, price) VALUES (?, ?, ?)";
+  private static final String SQL_ADMIN_BOOKED =
+      "SELECT halls.id, row, seat_number, price, booked_until, session_id, account_id, code, fio, phone " +
+          "FROM HALLS LEFT JOIN ACCOUNTS ON account_id = accounts.id ORDER BY row, seat_number";
+  private static final String SQL_ADMIN_CANCEL_BOOKED =
+      "UPDATE HALLS SET session_id = ?, account_id = ? WHERE row = ? AND seat_number = ?";
 
   private StoreImpl() {
     Properties properties = new Properties();
@@ -77,7 +83,7 @@ public class StoreImpl implements Store {
   }
 
   private State getState(
-          Timestamp now, Timestamp booked_until, int account_id, String session_id, String booked_session_id) {
+          Timestamp now, Timestamp booked_until, int account_id) {
 
     State state = State.FREE;
     if (account_id > 0) {
@@ -87,9 +93,7 @@ public class StoreImpl implements Store {
         state = State.PENDING;
       }
     }
-
     return state;
-
   }
 
   @Override
@@ -109,9 +113,8 @@ public class StoreImpl implements Store {
             getState(
                     new Timestamp(System.currentTimeMillis()),
                     rs.getTimestamp("booked_until"),
-                    rs.getInt("account_id"),
-                    sessionId,
-                    rs.getString("session_id"))
+                    rs.getInt("account_id")
+                    )
 
         ));
       }
@@ -237,5 +240,65 @@ public class StoreImpl implements Store {
     } catch (Exception e) {
       LOG.error("error loadHall" + e.getMessage());
     }
+  }
+
+  @Override
+  public Hall getBooked() {
+    List<Seat> seats = new ArrayList<>();
+    try (Connection connection = SOURCE.getConnection();
+        PreparedStatement st = connection.prepareStatement(SQL_ADMIN_BOOKED)
+    ) {
+      ResultSet rs = st.executeQuery();
+      while (rs.next()) {
+        seats.add(new Seat(
+            rs.getInt("id"),
+            rs.getInt("row"),
+            rs.getInt("seat_number"),
+            rs.getBigDecimal("price"),
+            rs.getString("session_id"),
+            new Account(
+                rs.getInt("account_id"),
+                rs.getString("fio"),
+                rs.getString("phone")
+            ),
+            getState(
+                new Timestamp(System.currentTimeMillis()),
+                rs.getTimestamp("booked_until"),
+                rs.getInt("account_id")
+                ),
+            rs.getString("code")
+        ));
+      }
+    } catch (Exception e) {
+      LOG.error("error getBooked" + e.getMessage());
+    }
+    return new Hall(seats);
+  }
+
+  @Override
+  public boolean cancelBooked(Seat seat) {
+    boolean result = false;
+
+    try (Connection connection = SOURCE.getConnection();
+        PreparedStatement cancelBookedSt = connection.prepareStatement(SQL_ADMIN_CANCEL_BOOKED)
+    ) {
+
+      connection.setAutoCommit(false);
+
+      cancelBookedSt.setNull(1, Types.NULL);
+      cancelBookedSt.setNull(2, Types.NULL);
+      cancelBookedSt.setInt(2, seat.getRow());
+      cancelBookedSt.setInt(3, seat.getNumber());
+      cancelBookedSt.executeUpdate();
+
+      result = (cancelBookedSt.executeUpdate() > 0);
+
+      connection.commit();
+
+    } catch (Exception e) {
+      LOG.error("error cancelBooked" + e.getMessage());
+    }
+
+    return result;
   }
 }

@@ -23,10 +23,15 @@ public class Config implements ServletContextListener {
     // Webapp startup.
     LOG.info("loading properties");
     service.readProperties(Config.class.getClassLoader().getResourceAsStream("app.properties"));
-    LOG.info("loading hall from xml");
-    List<Seat> seats = service.readHallConfig(Config.class.getClassLoader().getResourceAsStream("hall.xml"));
-    LOG.info("loading hall to DB");
-    service.initHall(seats);
+    boolean loadHall = Boolean.valueOf(service.getProperties().getProperty("reload.hall"));
+    LOG.info("reload.hall property: " + loadHall);
+    if (loadHall) {
+      LOG.info("loading hall from xml");
+      List<Seat> seats = service
+          .readHallConfig(Config.class.getClassLoader().getResourceAsStream("hall.xml"));
+      LOG.info("loading hall to DB");
+      service.initHall(seats);
+    }
   }
 
   public void contextDestroyed(ServletContextEvent event) {

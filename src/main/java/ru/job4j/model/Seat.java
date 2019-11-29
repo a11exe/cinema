@@ -36,6 +36,18 @@ public class Seat {
     this.state = state;
   }
 
+  public Seat(int id, int row, int number, BigDecimal price, String sessionId,
+      Account account, State state, String code) {
+    this.id = id;
+    this.row = row;
+    this.number = number;
+    this.price = price;
+    this.sessionId = sessionId;
+    this.account = account;
+    this.state = state;
+    this.code = code;
+  }
+
   public void setId(int id) {
     this.id = id;
   }

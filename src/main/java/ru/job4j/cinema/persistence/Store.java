@@ -19,4 +19,8 @@ public interface Store {
 
   void loadHall(List<Seat> seats);
 
+  Hall getBooked();
+
+  boolean cancelBooked(Seat seat);
+
 }

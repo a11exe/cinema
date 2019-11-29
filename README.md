@@ -22,7 +22,7 @@ Build a online booking system for cinema.
 + DBs: H2
 + log4j
 + Ajax JSON
-+ XML
++ XML DOM
 
 ## Install
 
@@ -37,4 +37,10 @@ DB connection
 + JDBC URL: jdbc:h2:file:~/cinema
 + User: sa, password: zD5z6Wx
 
-+ Admin, "admin@gmail.com", "admin"
++ Admin, pass: "admin" (set in properties)
+
+## Properties
+app.properties
+reload.hall (true - clear database and reload hall from hall.xml, false - nothing to do)
+booking.timeout.seconds (timeout of booking until confirmation)
+admin.pass (password for admin panel)

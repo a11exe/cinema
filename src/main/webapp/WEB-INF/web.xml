@@ -24,6 +24,25 @@
         <url-pattern>*</url-pattern>
     </filter-mapping>
 
+    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>ru.job4j.cinema.filter.AuthFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/booking</url-pattern>
+    </filter-mapping>
+
+    <servlet>
+        <servlet-name>LoginController</servlet-name>
+        <servlet-class>ru.job4j.cinema.controller.LoginController</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>LoginController</servlet-name>
+        <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+
     <servlet>
         <servlet-name>HallServlet</servlet-name>
         <servlet-class>ru.job4j.cinema.controller.HallServlet</servlet-class>
