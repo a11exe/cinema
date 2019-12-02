@@ -33,7 +33,7 @@ public class LoginController extends HttpServlet {
         if (password.equals(logic.getProperties().getProperty("admin.pass"))) {
             HttpSession session = req.getSession();
             session.setAttribute("loggedUser", "admin");
-            resp.sendRedirect("/");
+            resp.sendRedirect("/booking");
         } else {
             req.setAttribute("passwordIncorrect", "");
             req.getRequestDispatcher("WEB-INF/views/login.jsp").forward(req, resp);

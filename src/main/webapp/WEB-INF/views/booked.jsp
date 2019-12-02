@@ -1,3 +1,6 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="ru.job4j.model.Seat" %>
+<%@ page import="ru.job4j.model.State" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -24,7 +27,6 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
-<script src="js/cinema.js"></script>
 <%--<style>--%>
   <%--.seat-background {--%>
   <%--background: #f99;--%>
@@ -48,6 +50,7 @@
         <th>id</th>
         <th>row</th>
         <th>seat</th>
+        <th>price</th>
         <th>state</th>
         <th>name</th>
         <th>phone</th>
@@ -56,13 +59,15 @@
       </tr>
       </thead>
       <tbody id="tbody">
-      <c:forEach var="user" items="${seats}">
+      <c:forEach var="seat" items="${seats}">
         <tr>
           <td><c:out value="${seat.id}"/>
           </td>
           <td><c:out value="${seat.row}"/>
           </td>
           <td><c:out value="${seat.number}"/>
+          </td>
+          <td><c:out value="${seat.price}"/>
           </td>
           <td><c:out value="${seat.state}"/>
           </td>
@@ -72,14 +77,20 @@
           </td>
           <td><c:out value="${seat.code}"/>
           </td>
-          <c:if test="${loggedUser.isAdmin()}">
-          <td><a href="<c:out value="${baseUrl}" />/users/edit?id=<c:out value="${user.id}"/>"
-                 class="btn btn-link" role="button"
-                 aria-pressed="true" data-toggle="modal" data-target="#addEditUser" onclick="edit()">edit</a></td>
-          <td><button type="button"
-                      class="btn btn-danger"
-                      onclick="deleteUser(<c:out value="${user.id}"/>)">delete</button>
-            </c:if>
+          <c:choose>
+            <c:when test="${seat.state.equals(State.BOOKED)}">
+              <td>
+                <button type="button"
+                        class="btn btn-danger"
+                        onclick="">cancel book
+                </button>
+              </td>
+            </c:when>
+            <c:otherwise>
+              <td></td>
+            </c:otherwise>
+          </c:choose>
+
         </tr>
       </c:forEach>
       </tbody>

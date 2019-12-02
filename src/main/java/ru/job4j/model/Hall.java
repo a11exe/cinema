@@ -9,13 +9,13 @@ import java.util.List;
  */
 public class Hall {
 
-  private final List<Seat> hall;
+  private final List<Seat> seats;
 
-  public Hall(List<Seat> hall) {
-    this.hall = hall;
+  public Hall(List<Seat> seats) {
+    this.seats = seats;
   }
 
-  public List<Seat> getHall() {
-    return hall;
+  public List<Seat> getSeats() {
+    return seats;
   }
 }

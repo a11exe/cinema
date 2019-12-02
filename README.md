@@ -7,8 +7,8 @@ Build a online booking system for cinema.
 
  * 2 types of users: admin and regular users
  * Admin can see all bookings and  cancel them.
- * Admin can creates the hall configuration in a hall.xml file.
- * Users can book seat in the hall.
+ * Admin can creates the seats configuration in a seats.xml file.
+ * Users can book seat in the seats.
  * After selecting a seat, the user must confirm the booking within 5 minutes.
  * After confirming the reservation, the user receives a booking code.
     
@@ -41,6 +41,6 @@ DB connection
 
 ## Properties
 app.properties
-reload.hall (true - clear database and reload hall from hall.xml, false - nothing to do)
+reload.seats (true - clear database and reload seats from seats.xml, false - nothing to do)
 booking.timeout.seconds (timeout of booking until confirmation)
 admin.pass (password for admin panel)

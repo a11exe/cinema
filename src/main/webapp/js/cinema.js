@@ -17,7 +17,6 @@ function loadProperties() {
     type: 'GET',
     cache: false,
     success: function (data) {
-      debugger;
       bookingTimeOutSec = data.timeout;
     },
     error: function (jqXHR, textStatus, errorThrown) {
@@ -28,12 +27,12 @@ function loadProperties() {
 
 function loadHall() {
   $.ajax({
-    url: "/hall",
+    url: "/seats",
     type: 'GET',
     cache: false,
     success: function (data) {
       var result = "";
-      seats = data.hall;
+      seats = data.seats;
       var row = "";
       for (var i = 0; i != seats.length; ++i) {
         if (i == 0) {

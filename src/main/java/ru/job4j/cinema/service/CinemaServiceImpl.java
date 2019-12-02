@@ -27,7 +27,7 @@ import ru.job4j.model.Seat;
  */
 public class CinemaServiceImpl implements CinemaService {
 
-  private final Store logic = StoreImpl.getInstance();
+  private final Store store = StoreImpl.getInstance();
   private final static CinemaService INSTANCE = new CinemaServiceImpl();
   private static final Logger LOG = LogManager.getLogger(CinemaServiceImpl.class);
   private final Properties properties = new Properties();
@@ -42,20 +42,20 @@ public class CinemaServiceImpl implements CinemaService {
 
   @Override
   public Hall getHall(String sessionId) {
-    return logic.getHall(sessionId);
+    return store.getHall(sessionId);
   }
 
   @Override
   public void bookSeat(Seat seat) {
     Properties properties = getProperties();
-    logic.bookSeat(seat, Integer.valueOf(properties.getProperty("booking.timeout.seconds")));
+    store.bookSeat(seat, Integer.valueOf(properties.getProperty("booking.timeout.seconds")));
   }
 
   @Override
   public boolean confirmBooking(Seat seat) {
     String code = generateBookingConfirmationCode();
     seat.setCode(code);
-    return logic.confirmBooking(seat);
+    return store.confirmBooking(seat);
   }
 
   @Override
@@ -101,7 +101,7 @@ public class CinemaServiceImpl implements CinemaService {
 
   @Override
   public void initHall(List<Seat> seats) {
-      logic.loadHall(seats);
+      store.loadHall(seats);
   }
 
   @Override
@@ -127,5 +127,15 @@ public class CinemaServiceImpl implements CinemaService {
 
     // this will convert any number sequence into 6 character.
     return String.format("%06d", number);
+  }
+
+  @Override
+  public Hall getBooked() {
+    return store.getBooked();
+  }
+
+  @Override
+  public boolean cancelBooked(Seat seat) {
+    return store.cancelBooked(seat);
   }
 }

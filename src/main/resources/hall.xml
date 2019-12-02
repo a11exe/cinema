@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Hall xmlns="http://cinema.com"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://alllexe.com hall.xsd">
+  xsi:schemaLocation="http://alllexe.com seats.xsd">
   <Row number="1">
     <Seat number="1" price="200"></Seat>
     <Seat number="2" price="200"></Seat>

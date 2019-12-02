@@ -44,6 +44,17 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>AdminController</servlet-name>
+        <servlet-class>ru.job4j.cinema.controller.AdminController</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>AdminController</servlet-name>
+        <url-pattern>/booking</url-pattern>
+    </servlet-mapping>
+
+
+    <servlet>
         <servlet-name>HallServlet</servlet-name>
         <servlet-class>ru.job4j.cinema.controller.HallServlet</servlet-class>
         <load-on-startup>2</load-on-startup>
@@ -70,7 +81,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>HallJsonServlet</servlet-name>
-        <url-pattern>/hall</url-pattern>
+        <url-pattern>/seats</url-pattern>
     </servlet-mapping>
 
     <servlet>

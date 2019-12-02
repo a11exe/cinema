@@ -119,7 +119,7 @@ public class StoreImpl implements Store {
         ));
       }
     } catch (Exception e) {
-      LOG.error("error getHall" + e.getMessage());
+      LOG.error("error getSeats" + e.getMessage());
     }
     return new Hall(seats);
   }

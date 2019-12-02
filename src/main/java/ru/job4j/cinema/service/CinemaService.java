@@ -27,4 +27,8 @@ public interface CinemaService {
 
   Properties getProperties();
 
+  Hall getBooked();
+
+  boolean cancelBooked(Seat seat);
+
 }
