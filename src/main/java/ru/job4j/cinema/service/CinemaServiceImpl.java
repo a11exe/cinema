@@ -17,6 +17,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import ru.job4j.cinema.persistence.Store;
 import ru.job4j.cinema.persistence.StoreImpl;
+import ru.job4j.model.Account;
 import ru.job4j.model.Hall;
 import ru.job4j.model.Seat;
 
@@ -52,10 +53,13 @@ public class CinemaServiceImpl implements CinemaService {
   }
 
   @Override
-  public boolean confirmBooking(Seat seat) {
+  public String confirmBooking(String sessionId, Account account) {
     String code = generateBookingConfirmationCode();
-    seat.setCode(code);
-    return store.confirmBooking(seat);
+    if (store.confirmBooking(sessionId, account, code)) {
+      return code;
+    } else {
+      return null;
+    }
   }
 
   @Override
@@ -137,5 +141,10 @@ public class CinemaServiceImpl implements CinemaService {
   @Override
   public boolean cancelBooked(Seat seat) {
     return store.cancelBooked(seat);
+  }
+
+  @Override
+  public boolean cancelBookSeat(Seat seat) {
+    return store.cancelBookSeat(seat);
   }
 }

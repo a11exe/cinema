@@ -20,7 +20,7 @@ import ru.job4j.model.Seat;
  * @version 1
  * @since 22.11.2019
  */
-public class BookJsonServlet extends HttpServlet {
+public class CancleBookJsonServlet extends HttpServlet {
 
   private final CinemaService service = CinemaServiceImpl.getInstance();
 
@@ -42,6 +42,6 @@ public class BookJsonServlet extends HttpServlet {
     }
     seat.setSessionId(sessionId);
 
-    service.bookSeat(seat);
+    service.cancelBookSeat(seat);
   }
 }

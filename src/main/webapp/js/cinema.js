@@ -1,5 +1,4 @@
 var seats;
-var selectedSeatIndex = "";
 var bookingTimeOutSec;
 
 $(document).ready(function () {
@@ -25,31 +24,51 @@ function loadProperties() {
   });
 }
 
+function showRows() {
+  var result = "";
+  var row = "<div>";
+  for (var i = 0; i !== seats.length; ++i) {
+    if (row !== seats[i].row) {
+      row = seats[i].row;
+      result += "</div>"
+          + "      <div class=\"row justify-content-md-center\">"
+          + "      <div class=\"seat\"><button  type=\"button\" class=\"btn seat\">" + row + "</button></div>"
+    }
+  }
+  result += "</div>"
+  var rows = document.getElementById("rows");
+  rows.innerHTML = result;
+}
+
+function showSeats() {
+  var result = "";
+  var row = "";
+  for (var i = 0; i !== seats.length; ++i) {
+    if (i === 0) {
+      row = seats[i].row;
+      result += "<div class=\"row justify-content-md-center\">";
+    } else if (row !== seats[i].row) {
+      row = seats[i].row;
+      result += "</div>"
+          + "      <div class=\"row justify-content-md-center\">";
+    }
+    result += getCellSeat(i);
+  }
+  result += "</div>"
+  var hall = document.getElementById("hall");
+  hall.innerHTML = result;
+}
+
 function loadHall() {
   $.ajax({
     url: "/seats",
     type: 'GET',
     cache: false,
     success: function (data) {
-      var result = "";
       seats = data.seats;
-      var row = "";
-      for (var i = 0; i != seats.length; ++i) {
-        if (i == 0) {
-          row = seats[i].row;
-          result += "<div class=\"row justify-content-md-center\">";
-              + "        <th>" + row + "</th>"
-        } else if (row != seats[i].row) {
-          row = seats[i].row;
-          result += "</div>\n"
-              + "      <div class=\"row justify-content-md-center\">\n";
-        }
-        result += getCellSeat(i);
-      }
-      result += "</div>"
-      var hall = document.getElementById("hall");
-      hall.innerHTML = result;
-      markChecked();
+      showRows();
+      showSeats();
+      showSelected();
     },
     error: function (jqXHR, textStatus, errorThrown) {
       console.log("Error... " + textStatus + "        " + errorThrown);
@@ -60,61 +79,74 @@ function loadHall() {
 function getCellSeat(i) {
   var seatNum = seats[i].number;
   var row = seats[i].row;
-  var seatStr = "<div class=\"col col-sm-2 \" id =\"seat" + i + "\" class=\"alert alert-secondary\"><input id =\"input" + i + "\" type=\"radio\" value=\"" + seats[i].id + "\" disabled> Ряд "
-      + row + ", Место " + seatNum + "</div>";
-  if (seats[i].state == "BOOKED") {
-    seatStr = "<div class=\"col col-sm-2 \" id =\"seat" + i + "\" class=\"alert alert-danger\"><input id =\"input" + i + "\" type=\"radio\" value=\"" + seats[i].id + "\" disabled> Ряд "
-        + row + ", Место " + seatNum + "</div>";
+  var seatStr;
+  if (seats[i].state === "BOOKED") {
+    seatStr = "<button type=\"button\" class=\"btn booked seat\">" + seatNum + "</button>";
   }
-  if (seats[i].state == "PENDING") {
-    selectedSeatIndex = i;
-    seatStr = "<div class=\"col col-sm-2 \" id =\"seat" + i + "\" class=\"alert alert-warning\"><input id =\"input" + i + "\" type=\"radio\" value=\"" + seats[i].id + "\" disabled> Ряд "
-        + row + ", Место " + seatNum + "</div>";
+  if (seats[i].state === "PENDING") {
+    seatStr = "<button type=\"button\" class=\"btn pending seat\">" + seatNum + "</button>";
   }
-  if (seats[i].state == "FREE") {
-    seatStr = "<div class=\"col col-sm-2 \" id =\"seat" + i + "\" class=\"alert alert-light\"><input id =\"input" + i + "\" type=\"radio\" name=\"place\" value=\"" + seats[i].id + "\" onclick='startBooking(" + i + ")'> Ряд "
-        + row + ", Место " + seatNum + "</div>";
+  if (seats[i].state === "SELECTED") {
+    seatStr = "<button type=\"button\" class=\"btn selected seat\" onclick=cancelBooking(" + i + ")>" + seatNum + "</button>";
+  }
+  if (seats[i].state === "FREE") {
+    seatStr = "<button type=\"button\" class=\"btn free seat\" onclick=startBooking(" + i + ")>" + seatNum + "</button>";
   }
   return seatStr;
 }
 
-function markChecked() {
-  if (selectedSeatIndex !== "") {
-    selectedSeat = seats[selectedSeatIndex];
-    if (selectedSeat.state = "PENDING") {
-      var selectedSeatEl = document.getElementById("selected");
-      var cell = document.getElementById("seat" + selectedSeatIndex);
-      $(cell).removeClass("alert-light").removeClass("alert-warning").addClass("alert-success");
-      var input = document.getElementById("input" + selectedSeatIndex);
-      $(input).prop("checked", true);
-      selectedSeatEl.innerHTML = "Selected. Row: " + selectedSeat.row + " seat: " + selectedSeat.number;
+function showSelected() {
+  var result = "Selected: <br>";
+  var total = 0;
+  for (var i = 0; i !== seats.length; ++i) {
+    if (seats[i].state === "SELECTED") {
+      row = seats[i].row;
+      result += "Row: " + seats[i].row + " seat: " + seats[i].number + " price: " + seats[i].price + "<br>";
+      total += seats[i].price;
     }
   }
+  result += "<hr/>";
+  result += "<span class=\"text-dark\"> total: " + total + "</span>";
+  result += "<hr>";
+  document.getElementById("selected").innerHTML = result;
 }
 
-function startBooking(id) {
-  $(document.getElementById("selected")).removeClass("alert-light").addClass("alert-primary");
-  if (selectedSeatIndex !== "") {
-    var cellPrev = document.getElementById("seat" + selectedSeatIndex);
-    $(cellPrev).removeClass("alert-success").addClass("alert-light");
-  }
-  selectedSeatIndex = id;
-  timeOutSec = bookingTimeOutSec;
-  countdownTimer = setInterval('bookingTimer()', 1000);
-  var seat = seats[selectedSeatIndex];
+function startBooking(i) {
+  var seat = seats[i];
   $.ajax({
-    url: "/book",
+    url: "/startbooking",
     type: 'POST',
     cache: false,
     datatype: 'json',
     contentType: 'application/json;charset=UTF-8',
-    data: JSON.stringify(seats[selectedSeatIndex]),
+    data: JSON.stringify(seats[i]),
     success: function (data) {
-      markChecked();
+      timeOutSec = bookingTimeOutSec;
+      countdownTimer = setInterval('bookingTimer()', 1000);
       loadHall();
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      selectedSeatIndex = "";
+      console.log("Error... " + textStatus + "        " + errorThrown);
+      loadHall();
+    },
+  })
+}
+
+function cancelBooking(i) {
+  var seat = seats[i];
+  $.ajax({
+    url: "/cancelbooking",
+    type: 'POST',
+    cache: false,
+    datatype: 'json',
+    contentType: 'application/json;charset=UTF-8',
+    data: JSON.stringify(seats[i]),
+    success: function (data) {
+      timeOutSec = bookingTimeOutSec;
+      countdownTimer = setInterval('bookingTimer()', 1000);
+      loadHall();
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
       console.log("Error... " + textStatus + "        " + errorThrown);
       loadHall();
     },
@@ -125,17 +157,13 @@ function addBookingInfo() {
   var selectedSeat = document.getElementById("selectedSeat");
 
   selectedSeat.innerHTML =
-      "Вы выбрали ряд " + seats[selectedSeatIndex].row +
-      " место " + seats[selectedSeatIndex].number +
-      ", Сумма : " + seats[selectedSeatIndex].price + " рублей.";
+      "Please confirm booking";
 }
 
 function confirmBooking() {
-  var seat = seats[selectedSeatIndex];
   var account = new Object();
   account.name = $('#username').val();
   account.phone = $('#phone').val();
-  seat.account = account;
 
   $.ajax({
     url: "/confirm",
@@ -143,12 +171,11 @@ function confirmBooking() {
     cache: false,
     datatype: 'json',
     contentType: 'application/json;charset=UTF-8',
-    data: JSON.stringify(seat),
+    data: JSON.stringify(account),
     success: function (data) {
-      showConfirmationCode("Your booking code<br><b>" + data.code + "</b>");
+      showConfirmationCode("Your booking code<br><b>" + data + "</b>");
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      selectedSeatIndex = "";
       console.log("Error... " + textStatus + "        " + errorThrown);
       showConfirmationCode("<b>booking failed</b>");
     },
@@ -169,9 +196,9 @@ function bookingTimer() {
   if (remainingSeconds < 10) {
     remainingSeconds = "0" + remainingSeconds;
   }
-  document.getElementById('bookTime').innerHTML = "Booking will be canceled after <span id=\"countdown\" class=\"timer\"></span>";
+  document.getElementById('bookTime').innerHTML = "Booking will be canceled <br> after <span id=\"countdown\" class=\"timer\"></span>";
   document.getElementById('countdown').innerHTML = minutes + ":" + remainingSeconds;
-  if (timeOutSec == 0) {
+  if (timeOutSec === 0) {
     clearInterval(countdownTimer);
     document.getElementById('countdown').innerHTML = "Booking canceled";
   } else {

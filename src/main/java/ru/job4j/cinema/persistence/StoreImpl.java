@@ -41,12 +41,10 @@ public class StoreImpl implements Store {
           "AND account_id is NULL";
   private static final String SQL_CANCEL_BOOKING =
           "UPDATE HALLS SET session_id = ?, booked_until = ? " +
-          "WHERE session_id = ? AND account_id is NULL";
+          "WHERE session_id = ? AND account_id is NULL AND row = ? AND seat_number = ?";
   private static final String SQL_CONFIRM_BOOKING =
           "UPDATE HALLS SET account_id = ?, code = ? " +
-          "WHERE row = ? AND seat_number = ? " +
-          "AND ((session_id = ? OR session_id is NULL) OR booked_until <= ?) " +
-          "AND account_id is NULL";
+          "WHERE session_id = ? AND account_id is NULL";
   private static final String SQL_FIND_ACCOUNT =
           "SELECT id, fio, phone " +
                   "FROM ACCOUNTS WHERE fio = ? AND phone = ?";
@@ -60,7 +58,7 @@ public class StoreImpl implements Store {
       "SELECT halls.id, row, seat_number, price, booked_until, session_id, account_id, code, fio, phone " +
           "FROM HALLS LEFT JOIN ACCOUNTS ON account_id = accounts.id ORDER BY row, seat_number";
   private static final String SQL_ADMIN_CANCEL_BOOKED =
-      "UPDATE HALLS SET session_id = ?, account_id = ? WHERE row = ? AND seat_number = ?";
+      "UPDATE HALLS SET session_id = ?, account_id = ?, code = ? WHERE row = ? AND seat_number = ?";
 
   private StoreImpl() {
     Properties properties = new Properties();
@@ -83,14 +81,18 @@ public class StoreImpl implements Store {
   }
 
   private State getState(
-          Timestamp now, Timestamp booked_until, int account_id) {
+          Timestamp now, Timestamp booked_until, String sessionId, String bookSessionId, int account_id) {
 
     State state = State.FREE;
     if (account_id > 0) {
       state = State.BOOKED;
     } else {
       if (booked_until != null && booked_until.getTime() > now.getTime()) {
-        state = State.PENDING;
+        if (sessionId.equals(bookSessionId)) {
+         state = State.SELECTED;
+        } else {
+          state = State.PENDING;
+        }
       }
     }
     return state;
@@ -113,6 +115,8 @@ public class StoreImpl implements Store {
             getState(
                     new Timestamp(System.currentTimeMillis()),
                     rs.getTimestamp("booked_until"),
+                    sessionId,
+                    rs.getString("session_id"),
                     rs.getInt("account_id")
                     )
 
@@ -132,16 +136,10 @@ public class StoreImpl implements Store {
     book_until.setTime(book_until.getTime() + TimeUnit.SECONDS.toMillis(timeOutSec));
 
     try (Connection connection = SOURCE.getConnection();
-        PreparedStatement cancelBookSt = connection.prepareStatement(SQL_CANCEL_BOOKING);
         PreparedStatement bookSt = connection.prepareStatement(SQL_BOOKING)
     ) {
 
       connection.setAutoCommit(false);
-
-      cancelBookSt.setNull(1, Types.NULL);
-      cancelBookSt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-      cancelBookSt.setString(3, seat.getSessionId());
-      cancelBookSt.executeUpdate();
 
       bookSt.setString(1, seat.getSessionId());
       bookSt.setTimestamp(2, book_until);
@@ -162,7 +160,7 @@ public class StoreImpl implements Store {
   }
 
   @Override
-  public boolean confirmBooking(Seat seat) {
+  public boolean confirmBooking(String sessionId, Account account, String code) {
 
     boolean result = false;
 
@@ -177,16 +175,16 @@ public class StoreImpl implements Store {
 
       Integer accountId = null;
 
-      findAccSt.setString(1, seat.getAccount().getName());
-      findAccSt.setString(2, seat.getAccount().getPhone());
+      findAccSt.setString(1, account.getName());
+      findAccSt.setString(2, account.getPhone());
 
       ResultSet rs = findAccSt.executeQuery();
       while (rs.next()) {
         accountId = rs.getInt("id");
       }
       if (accountId == null) {
-        createAccSt.setString(1, seat.getAccount().getName());
-        createAccSt.setString(2, seat.getAccount().getPhone());
+        createAccSt.setString(1, account.getName());
+        createAccSt.setString(2, account.getPhone());
         createAccSt.executeUpdate();
         rs = createAccSt.getGeneratedKeys();
 
@@ -195,14 +193,11 @@ public class StoreImpl implements Store {
         }
       }
 
-      seat.getAccount().setId(accountId);
+      account.setId(accountId);
 
-      confirmSt.setInt(1, seat.getAccount().getId());
-      confirmSt.setString(2, seat.getCode());
-      confirmSt.setInt(3, seat.getRow());
-      confirmSt.setInt(4, seat.getNumber());
-      confirmSt.setString(5, seat.getSessionId());
-      confirmSt.setTimestamp(6, new Timestamp(System.currentTimeMillis()));
+      confirmSt.setInt(1, account.getId());
+      confirmSt.setString(2, code);
+      confirmSt.setString(3, sessionId);
 
       result = (confirmSt.executeUpdate() > 0);
 
@@ -264,8 +259,10 @@ public class StoreImpl implements Store {
             getState(
                 new Timestamp(System.currentTimeMillis()),
                 rs.getTimestamp("booked_until"),
+                "",
+                rs.getString("session_id"),
                 rs.getInt("account_id")
-                ),
+            ),
             rs.getString("code")
         ));
       }
@@ -287,8 +284,9 @@ public class StoreImpl implements Store {
 
       cancelBookedSt.setNull(1, Types.NULL);
       cancelBookedSt.setNull(2, Types.NULL);
-      cancelBookedSt.setInt(2, seat.getRow());
-      cancelBookedSt.setInt(3, seat.getNumber());
+      cancelBookedSt.setNull(3, Types.NULL);
+      cancelBookedSt.setInt(4, seat.getRow());
+      cancelBookedSt.setInt(5, seat.getNumber());
       cancelBookedSt.executeUpdate();
 
       result = (cancelBookedSt.executeUpdate() > 0);
@@ -297,6 +295,34 @@ public class StoreImpl implements Store {
 
     } catch (Exception e) {
       LOG.error("error cancelBooked" + e.getMessage());
+    }
+
+    return result;
+  }
+
+  @Override
+  public boolean cancelBookSeat(Seat seat) {
+    boolean result = false;
+
+    try (Connection connection = SOURCE.getConnection();
+        PreparedStatement cancelBookSt = connection.prepareStatement(SQL_CANCEL_BOOKING);
+    ) {
+
+      connection.setAutoCommit(false);
+
+      cancelBookSt.setNull(1, Types.NULL);
+      cancelBookSt.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+      cancelBookSt.setString(3, seat.getSessionId());
+      cancelBookSt.setInt(4, seat.getRow());
+      cancelBookSt.setInt(5, seat.getNumber());
+      cancelBookSt.executeUpdate();
+
+      result = (cancelBookSt.executeUpdate() > 0);
+
+      connection.commit();
+
+    } catch (Exception e) {
+      LOG.error("error cancelBookSeat" + e.getMessage());
     }
 
     return result;

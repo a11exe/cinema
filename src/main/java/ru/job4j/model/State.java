@@ -6,7 +6,7 @@
 package ru.job4j.model;
 
 public enum State {
-    NOT_AVAILABLE,
+    SELECTED,
     FREE,
     PENDING,
     BOOKED

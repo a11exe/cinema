@@ -1,6 +1,7 @@
 package ru.job4j.cinema.persistence;
 
 import java.util.List;
+import ru.job4j.model.Account;
 import ru.job4j.model.Hall;
 import ru.job4j.model.Seat;
 
@@ -15,7 +16,7 @@ public interface Store {
 
   boolean bookSeat(Seat seat, int timeOutSec);
 
-  boolean confirmBooking(Seat seat);
+  boolean confirmBooking(String sessionId, Account account, String code);
 
   void loadHall(List<Seat> seats);
 
@@ -23,4 +24,5 @@ public interface Store {
 
   boolean cancelBooked(Seat seat);
 
+  boolean cancelBookSeat(Seat seat);
 }

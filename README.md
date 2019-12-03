@@ -38,9 +38,10 @@ DB connection
 + User: sa, password: zD5z6Wx
 
 + Admin, pass: "admin" (set in properties)
+[http://localhost:8080/admin](http://localhost:8080/)
 
 ## Properties
-app.properties
-reload.seats (true - clear database and reload seats from seats.xml, false - nothing to do)
+*app.properties file*
+reload.hall (true - clear database and reload seats from seats.xml, false - don't reload, save data in database)
 booking.timeout.seconds (timeout of booking until confirmation)
 admin.pass (password for admin panel)

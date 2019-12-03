@@ -11,6 +11,7 @@
 
     <servlet-mapping>
         <servlet-name>default</servlet-name>
+        <url-pattern>*.html</url-pattern>
         <url-pattern>/images/*</url-pattern>
         <url-pattern>/js/*</url-pattern>
     </servlet-mapping>
@@ -25,17 +26,18 @@
     </filter-mapping>
 
     <filter>
-        <filter-name>AuthFilter</filter-name>
-        <filter-class>ru.job4j.cinema.filter.AuthFilter</filter-class>
+        <filter-name>AdminFilter</filter-name>
+        <filter-class>ru.job4j.cinema.filter.AdminFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
+        <filter-name>AdminFilter</filter-name>
         <url-pattern>/booking</url-pattern>
+        <url-pattern>/admin</url-pattern>
     </filter-mapping>
 
     <servlet>
         <servlet-name>LoginController</servlet-name>
-        <servlet-class>ru.job4j.cinema.controller.LoginController</servlet-class>
+        <servlet-class>ru.job4j.cinema.controller.LoginServlet</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
     <servlet-mapping>
@@ -44,24 +46,23 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>AdminController</servlet-name>
-        <servlet-class>ru.job4j.cinema.controller.AdminController</servlet-class>
+        <servlet-name>AdminServlet</servlet-name>
+        <servlet-class>ru.job4j.cinema.controller.admin.AdminServlet</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>AdminController</servlet-name>
-        <url-pattern>/booking</url-pattern>
+        <servlet-name>AdminServlet</servlet-name>
+        <url-pattern>/admin</url-pattern>
     </servlet-mapping>
 
-
     <servlet>
-        <servlet-name>HallServlet</servlet-name>
-        <servlet-class>ru.job4j.cinema.controller.HallServlet</servlet-class>
+        <servlet-name>BookAdminJsonServlet</servlet-name>
+        <servlet-class>ru.job4j.cinema.controller.admin.BookAdminJsonServlet</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>HallServlet</servlet-name>
-        <url-pattern>/</url-pattern>
+        <servlet-name>BookAdminJsonServlet</servlet-name>
+        <url-pattern>/bookadmin</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -85,22 +86,32 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>BookJsonServlet</servlet-name>
-        <servlet-class>ru.job4j.cinema.controller.BookJsonServlet</servlet-class>
+        <servlet-name>StartBookJsonServlet</servlet-name>
+        <servlet-class>ru.job4j.cinema.controller.StartBookJsonServlet</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>BookJsonServlet</servlet-name>
-        <url-pattern>/book</url-pattern>
+        <servlet-name>StartBookJsonServlet</servlet-name>
+        <url-pattern>/startbooking</url-pattern>
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>ConfirmBookJsonServlet</servlet-name>
-        <servlet-class>ru.job4j.cinema.controller.ConfirmBookJsonServlet</servlet-class>
+        <servlet-name>CancleBookJsonServlet</servlet-name>
+        <servlet-class>ru.job4j.cinema.controller.CancleBookJsonServlet</servlet-class>
         <load-on-startup>2</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>ConfirmBookJsonServlet</servlet-name>
+        <servlet-name>CancleBookJsonServlet</servlet-name>
+        <url-pattern>/cancelbooking</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ConfirmBookingJsonServlet</servlet-name>
+        <servlet-class>ru.job4j.cinema.controller.ConfirmBookingJsonServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ConfirmBookingJsonServlet</servlet-name>
         <url-pattern>/confirm</url-pattern>
     </servlet-mapping>
 

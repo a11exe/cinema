@@ -3,6 +3,7 @@ package ru.job4j.cinema.service;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
+import ru.job4j.model.Account;
 import ru.job4j.model.Hall;
 import ru.job4j.model.Seat;
 
@@ -17,7 +18,7 @@ public interface CinemaService {
 
   void bookSeat(Seat seat);
 
-  boolean confirmBooking(Seat seat);
+  String confirmBooking(String sessionId, Account account);
 
   List<Seat> readHallConfig(InputStream hallConfigXMLIS);
 
@@ -31,4 +32,5 @@ public interface CinemaService {
 
   boolean cancelBooked(Seat seat);
 
+  boolean cancelBookSeat(Seat seat);
 }

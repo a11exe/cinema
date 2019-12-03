@@ -1,27 +1,26 @@
 package ru.job4j.cinema.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ru.job4j.cinema.service.CinemaService;
-import ru.job4j.cinema.service.CinemaServiceImpl;
-import ru.job4j.model.Seat;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.stream.Collectors;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import ru.job4j.cinema.service.CinemaService;
+import ru.job4j.cinema.service.CinemaServiceImpl;
+import ru.job4j.model.Seat;
 
 /**
  * @author Alexander Abramov (alllexe@mail.ru)
  * @version 1
  * @since 22.11.2019
  */
-public class ConfirmBookJsonServlet extends HttpServlet {
+public class StartBookJsonServlet extends HttpServlet {
 
   private final CinemaService service = CinemaServiceImpl.getInstance();
 
@@ -43,14 +42,6 @@ public class ConfirmBookJsonServlet extends HttpServlet {
     }
     seat.setSessionId(sessionId);
 
-    if (service.confirmBooking(seat)) {
-      String jsonInString = mapper.writeValueAsString(seat);
-      resp.setContentType("application/json");
-      resp.setCharacterEncoding("UTF-8");
-      resp.getWriter().write(jsonInString);
-      resp.getWriter().flush();
-    } else {
-      resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-    }
+    service.bookSeat(seat);
   }
 }

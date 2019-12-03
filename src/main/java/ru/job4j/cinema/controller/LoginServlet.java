@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 import ru.job4j.cinema.service.CinemaService;
 import ru.job4j.cinema.service.CinemaServiceImpl;
 
-public class LoginController extends HttpServlet {
+public class LoginServlet extends HttpServlet {
 
     private final CinemaService logic = CinemaServiceImpl.getInstance();
 
@@ -33,7 +33,7 @@ public class LoginController extends HttpServlet {
         if (password.equals(logic.getProperties().getProperty("admin.pass"))) {
             HttpSession session = req.getSession();
             session.setAttribute("loggedUser", "admin");
-            resp.sendRedirect("/booking");
+            resp.sendRedirect("/admin");
         } else {
             req.setAttribute("passwordIncorrect", "");
             req.getRequestDispatcher("WEB-INF/views/login.jsp").forward(req, resp);
