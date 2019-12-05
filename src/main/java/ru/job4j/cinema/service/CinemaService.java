@@ -24,10 +24,6 @@ public interface CinemaService {
 
   void initHall(List<Seat> seats);
 
-  Properties readProperties(InputStream propertiesIS);
-
-  Properties getProperties();
-
   Hall getBooked();
 
   boolean cancelBooked(Seat seat);

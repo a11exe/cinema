@@ -1,6 +1,5 @@
 package ru.job4j.cinema.persistence;
 
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,12 +8,12 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.job4j.cinema.service.PropertiesService;
+import ru.job4j.cinema.service.PropertiesServiceImpl;
 import ru.job4j.model.Account;
 import ru.job4j.model.Hall;
 import ru.job4j.model.Seat;
@@ -29,6 +28,7 @@ public class StoreImpl implements Store {
 
   private static final Logger LOG = LogManager.getLogger(StoreImpl.class);
   private static final BasicDataSource SOURCE = new BasicDataSource();
+  private final PropertiesService properties = PropertiesServiceImpl.getInstance();
 
   private final static Store INSTANCE = new StoreImpl();
   private static final String SQL_HALL =
@@ -61,19 +61,14 @@ public class StoreImpl implements Store {
       "UPDATE HALLS SET session_id = ?, account_id = ?, code = ? WHERE row = ? AND seat_number = ?";
 
   private StoreImpl() {
-    Properties properties = new Properties();
-    try (InputStream in = StoreImpl.class.getClassLoader().getResourceAsStream("app.properties")) {
-      properties.load(in);
-    } catch (Exception e) {
-      throw new IllegalStateException(e);
-    }
-    SOURCE.setDriverClassName(properties.getProperty("driver"));
-    SOURCE.setUrl(properties.getProperty("url"));
-    SOURCE.setUsername(properties.getProperty("username"));
-    SOURCE.setPassword(properties.getProperty("password"));
-    SOURCE.setMinIdle(Integer.parseInt(properties.getProperty("minIdle")));
-    SOURCE.setMaxIdle(Integer.parseInt(properties.getProperty("maxIdle")));
-    SOURCE.setMaxOpenPreparedStatements(Integer.parseInt(properties.getProperty("maxOpenPreparedStatements")));
+
+    SOURCE.setDriverClassName(properties.getProperties().getProperty("driver"));
+    SOURCE.setUrl(properties.getProperties().getProperty("url"));
+    SOURCE.setUsername(properties.getProperties().getProperty("username"));
+    SOURCE.setPassword(properties.getProperties().getProperty("password"));
+    SOURCE.setMinIdle(Integer.parseInt(properties.getProperties().getProperty("minIdle")));
+    SOURCE.setMaxIdle(Integer.parseInt(properties.getProperties().getProperty("maxIdle")));
+    SOURCE.setMaxOpenPreparedStatements(Integer.parseInt(properties.getProperties().getProperty("maxOpenPreparedStatements")));
   }
 
   public static Store getInstance() {

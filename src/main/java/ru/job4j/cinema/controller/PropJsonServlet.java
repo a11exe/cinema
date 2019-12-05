@@ -5,8 +5,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import ru.job4j.cinema.service.CinemaService;
-import ru.job4j.cinema.service.CinemaServiceImpl;
+import ru.job4j.cinema.service.PropertiesService;
+import ru.job4j.cinema.service.PropertiesServiceImpl;
 
 /**
  * @author Alexander Abramov (alllexe@mail.ru)
@@ -15,14 +15,14 @@ import ru.job4j.cinema.service.CinemaServiceImpl;
  */
 public class PropJsonServlet  extends HttpServlet {
 
-  private final CinemaService service = CinemaServiceImpl.getInstance();
+  private final PropertiesService propertiesService = PropertiesServiceImpl.getInstance();
 
   @Override
   protected void doGet(HttpServletRequest req, HttpServletResponse resp)
       throws ServletException, IOException {
     resp.setContentType("application/json");
     resp.setCharacterEncoding("UTF-8");
-    resp.getWriter().write("{\"timeout\":" + service.getProperties().getProperty("booking.timeout.seconds") + "}");
+    resp.getWriter().write("{\"timeout\":" + propertiesService.getProperties().getProperty("booking.timeout.seconds") + "}");
     resp.getWriter().flush();
   }
 

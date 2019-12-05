@@ -13,10 +13,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import ru.job4j.cinema.service.CinemaService;
 import ru.job4j.cinema.service.CinemaServiceImpl;
+import ru.job4j.cinema.service.PropertiesService;
+import ru.job4j.cinema.service.PropertiesServiceImpl;
 
 public class LoginServlet extends HttpServlet {
 
     private final CinemaService logic = CinemaServiceImpl.getInstance();
+    private final PropertiesService propertiesService = PropertiesServiceImpl.getInstance();
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -30,7 +34,7 @@ public class LoginServlet extends HttpServlet {
 
         String password = req.getParameter("password");
 
-        if (password.equals(logic.getProperties().getProperty("admin.pass"))) {
+        if (password.equals(propertiesService.getProperties().getProperty("admin.pass"))) {
             HttpSession session = req.getSession();
             session.setAttribute("loggedUser", "admin");
             resp.sendRedirect("/admin");

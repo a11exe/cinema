@@ -7,6 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.job4j.cinema.service.CinemaService;
 import ru.job4j.cinema.service.CinemaServiceImpl;
+import ru.job4j.cinema.service.PropertiesService;
+import ru.job4j.cinema.service.PropertiesServiceImpl;
 import ru.job4j.model.Seat;
 
 /**
@@ -18,12 +20,11 @@ public class Config implements ServletContextListener {
 
   private static final Logger LOG = LogManager.getLogger(Config.class);
   private final CinemaService service = CinemaServiceImpl.getInstance();
+  private final PropertiesService properties = PropertiesServiceImpl.getInstance();
 
   public void contextInitialized(ServletContextEvent event) {
     // Webapp startup.
-    LOG.info("loading properties");
-    service.readProperties(Config.class.getClassLoader().getResourceAsStream("app.properties"));
-    boolean loadHall = Boolean.valueOf(service.getProperties().getProperty("reload.hall"));
+    boolean loadHall = Boolean.valueOf(properties.getProperties().getProperty("reload.hall"));
     LOG.info("reload.hall property: " + loadHall);
     if (loadHall) {
       LOG.info("loading hall from xml");

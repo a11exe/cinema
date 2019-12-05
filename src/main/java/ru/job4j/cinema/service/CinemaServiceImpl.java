@@ -1,11 +1,9 @@
 package ru.job4j.cinema.service;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 import java.util.Random;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,7 +29,7 @@ public class CinemaServiceImpl implements CinemaService {
   private final Store store = StoreImpl.getInstance();
   private final static CinemaService INSTANCE = new CinemaServiceImpl();
   private static final Logger LOG = LogManager.getLogger(CinemaServiceImpl.class);
-  private final Properties properties = new Properties();
+  private final PropertiesService properties = PropertiesServiceImpl.getInstance();
 
   private CinemaServiceImpl() {
   }
@@ -48,8 +46,7 @@ public class CinemaServiceImpl implements CinemaService {
 
   @Override
   public void bookSeat(Seat seat) {
-    Properties properties = getProperties();
-    store.bookSeat(seat, Integer.valueOf(properties.getProperty("booking.timeout.seconds")));
+    store.bookSeat(seat, Integer.valueOf(properties.getProperties().getProperty("booking.timeout.seconds")));
   }
 
   @Override
@@ -106,22 +103,6 @@ public class CinemaServiceImpl implements CinemaService {
   @Override
   public void initHall(List<Seat> seats) {
       store.loadHall(seats);
-  }
-
-  @Override
-  public Properties readProperties(InputStream propertiesIS) {
-    try {
-      properties.load(propertiesIS);
-      LOG.info("booking timeout: " + properties.getProperty("booking.timeout.seconds"));
-    } catch (IOException e) {
-      LOG.error("error loading properties");
-    }
-    return properties;
-  }
-
-  @Override
-  public Properties getProperties() {
-    return properties;
   }
 
   private String generateBookingConfirmationCode() {
