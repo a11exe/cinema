@@ -1,6 +1,7 @@
 package ru.job4j.cinema.persistence;
 
 import java.util.List;
+import org.apache.commons.dbcp2.BasicDataSource;
 import ru.job4j.model.Account;
 import ru.job4j.model.Hall;
 import ru.job4j.model.Seat;
@@ -25,4 +26,7 @@ public interface Store {
   boolean cancelBooked(Seat seat);
 
   boolean cancelBookSeat(Seat seat);
+
+  BasicDataSource getDataSource();
+
 }

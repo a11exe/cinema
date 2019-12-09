@@ -101,12 +101,12 @@ function showSelected() {
   for (var i = 0; i !== seats.length; ++i) {
     if (seats[i].state === "SELECTED") {
       row = seats[i].row;
-      result += "Row: " + seats[i].row + " seat: " + seats[i].number + " price: " + seats[i].price + "<br>";
+      result += "Row: " + seats[i].row + " seat: " + seats[i].number + " price: $" + seats[i].price + "<br>";
       total += seats[i].price;
     }
   }
   result += "<hr/>";
-  result += "<span class=\"text-dark\"> total: " + total + "</span>";
+  result += "<span class=\"text-dark\"> total: $" + total + "</span>";
   result += "<hr>";
   document.getElementById("selected").innerHTML = result;
 }

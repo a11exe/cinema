@@ -16,6 +16,11 @@ public class Account {
   public Account() {
   }
 
+  public Account(String name, String phone) {
+    this.name = name;
+    this.phone = phone;
+  }
+
   public Account(Integer id, String name, String phone) {
     this.id = id;
     this.name = name;

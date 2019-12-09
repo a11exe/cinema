@@ -1,19 +1,31 @@
 <html>
 <head>
-  <!-- Required meta tags -->
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-  <!-- Bootstrap CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+    <style>
+        .tableFixHead          { overflow-y: auto; height: 100px; }
+        .tableFixHead thead th { position: sticky; top: 0; }
 
-  <title>Movie tickets online booking (admin panel)</title>
+        /* Just common table stuff. Really. */
+        table  { border-collapse: collapse; width: 100%; }
+        th, td { padding: 8px 16px; }
+        th     { background:#eee; }
+    </style>
+    <title>Movie tickets online booking (admin panel)</title>
 </head>
 <body>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous">
 <script src="https://code.jquery.com/jquery-3.4.1.js"
         integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
         crossorigin="anonymous"></script>
@@ -44,7 +56,7 @@
       return "class=\"table-danger\"";
     }
     if (state === "PENDING") {
-     return "class=\"table-warning\""
+      return "class=\"table-warning\""
     }
   }
 
@@ -59,25 +71,25 @@
         var row = "";
         debugger
         for (var i = 0; i != seats.length; ++i) {
-            result += "<tr " + getRowClass(seats[i].state) + ">"
-            + "<td>" + seats[i].id + "</td>"
-            + "<td>" + seats[i].row + "</td>"
-            + "<td>" + seats[i].number + "</td>"
-            + "<td>" + seats[i].price + "</td>"
-            + "<td>" + seats[i].state + "</td>"
-            + "<td>" + nullToEmptyStr(seats[i].account.name) + "</td>"
-            + "<td>" + nullToEmptyStr(seats[i].account.phone) + "</td>"
-            + "<td>" + nullToEmptyStr(seats[i].code) + "</td>";
+          result += "<tr " + getRowClass(seats[i].state) + ">"
+              + "<td>" + seats[i].id + "</td>"
+              + "<td>" + seats[i].row + "</td>"
+              + "<td>" + seats[i].number + "</td>"
+              + "<td>" + seats[i].price + "</td>"
+              + "<td>" + seats[i].state + "</td>"
+              + "<td>" + nullToEmptyStr(seats[i].account.name) + "</td>"
+              + "<td>" + nullToEmptyStr(seats[i].account.phone) + "</td>"
+              + "<td>" + nullToEmptyStr(seats[i].code) + "</td>";
 
-            if (seats[i].state === "BOOKED") {
-              result += "<td>" +
-                  "<button type=\"button\"\n"
-                  + "                        class=\"btn btn-danger\"\n"
-                  + "                        onclick=\"cancelBooking(" + i + ")\">cancel"
-              + "</td>"
-            } else {
-              result += "<td></td>"
-            }
+          if (seats[i].state === "BOOKED") {
+            result += "<td>" +
+                "<button type=\"button\"\n"
+                + "                        class=\"btn btn-danger\"\n"
+                + "                        onclick=\"cancelBooking(" + i + ")\">cancel"
+                + "</td>"
+          } else {
+            result += "<td></td>"
+          }
           result += "</tr>"
         }
 
@@ -112,35 +124,35 @@
 
 
 <div class="container">
-  <div class="row pt-3">
-    <div>
-    <h4>Tickets online booking</h4>
+    <div class="row pt-3">
+        <div>
+            <h4>Tickets online booking</h4>
+        </div>
+        <br>
+
+
     </div>
-    <br>
+    <div class="row float-right">
+        <h2>Booking admin panel</h2>
+        <table class="table table-striped tableFixHead" id="datatable">
+            <thead>
+            <tr>
+                <th>id</th>
+                <th>row</th>
+                <th>seat</th>
+                <th>price</th>
+                <th>state</th>
+                <th>name</th>
+                <th>phone</th>
+                <th>code</th>
+                <th>cancel</th>
+            </tr>
+            </thead>
+            <tbody id="tbody">
 
-
-  </div>
-  <div class="row float-right">
-    <h2>Booking admin panel</h2>
-    <table class="table table-striped" id="datatable">
-      <thead>
-      <tr>
-        <th>id</th>
-        <th>row</th>
-        <th>seat</th>
-        <th>price</th>
-        <th>state</th>
-        <th>name</th>
-        <th>phone</th>
-        <th>code</th>
-        <th>cancel</th>
-      </tr>
-      </thead>
-      <tbody id="tbody">
-
-      </tbody>
-    </table>
-  </div>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 </body>

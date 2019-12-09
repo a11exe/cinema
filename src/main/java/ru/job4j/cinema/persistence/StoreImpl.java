@@ -41,6 +41,7 @@ public class StoreImpl implements Store {
           "AND account_id is NULL";
   private static final String SQL_CANCEL_BOOKING =
           "UPDATE HALLS SET session_id = ?, booked_until = ? " +
+          //"WHERE session_id = ? AND row = ? AND seat_number = ?";
           "WHERE session_id = ? AND account_id is NULL AND row = ? AND seat_number = ?";
   private static final String SQL_CONFIRM_BOOKING =
           "UPDATE HALLS SET account_id = ?, code = ? " +
@@ -58,7 +59,7 @@ public class StoreImpl implements Store {
       "SELECT halls.id, row, seat_number, price, booked_until, session_id, account_id, code, fio, phone " +
           "FROM HALLS LEFT JOIN ACCOUNTS ON account_id = accounts.id ORDER BY row, seat_number";
   private static final String SQL_ADMIN_CANCEL_BOOKED =
-      "UPDATE HALLS SET session_id = ?, account_id = ?, code = ? WHERE row = ? AND seat_number = ?";
+      "UPDATE HALLS SET session_id = ?, account_id = ?, code = ?, booked_until = ? WHERE row = ? AND seat_number = ?";
 
   private StoreImpl() {
 
@@ -91,6 +92,11 @@ public class StoreImpl implements Store {
       }
     }
     return state;
+  }
+
+  @Override
+  public BasicDataSource getDataSource() {
+    return SOURCE;
   }
 
   @Override
@@ -280,8 +286,9 @@ public class StoreImpl implements Store {
       cancelBookedSt.setNull(1, Types.NULL);
       cancelBookedSt.setNull(2, Types.NULL);
       cancelBookedSt.setNull(3, Types.NULL);
-      cancelBookedSt.setInt(4, seat.getRow());
-      cancelBookedSt.setInt(5, seat.getNumber());
+      cancelBookedSt.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+      cancelBookedSt.setInt(5, seat.getRow());
+      cancelBookedSt.setInt(6, seat.getNumber());
       cancelBookedSt.executeUpdate();
 
       result = (cancelBookedSt.executeUpdate() > 0);
@@ -300,7 +307,7 @@ public class StoreImpl implements Store {
     boolean result = false;
 
     try (Connection connection = SOURCE.getConnection();
-        PreparedStatement cancelBookSt = connection.prepareStatement(SQL_CANCEL_BOOKING);
+        PreparedStatement cancelBookSt = connection.prepareStatement(SQL_CANCEL_BOOKING)
     ) {
 
       connection.setAutoCommit(false);

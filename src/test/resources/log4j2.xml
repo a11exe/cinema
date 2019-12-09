@@ -7,7 +7,7 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="ru.job4j.bomberman" level="info" additivity="false">
+        <Logger name="ru.job4j.cinema" level="info" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
         <Root level="info">

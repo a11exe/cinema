@@ -19,10 +19,10 @@ public class PropertiesServiceImplTest {
     assertThat(propertiesService.getProperties().getProperty("booking.timeout.seconds"), is("300"));
     assertThat(propertiesService.getProperties().getProperty("reload.hall"), is("true"));
 
-    assertThat(propertiesService.getProperties().getProperty("database.url"), is("jdbc:h2:mem:cinema"));
-    assertThat(propertiesService.getProperties().getProperty("database.username"), is("sa"));
-    assertThat(propertiesService.getProperties().getProperty("database.password"), is(""));
-    assertThat(propertiesService.getProperties().getProperty("database.driverClassName"), is("org.h2.Driver"));
+    assertThat(propertiesService.getProperties().getProperty("url"), is("jdbc:h2:mem:cinema"));
+    assertThat(propertiesService.getProperties().getProperty("username"), is("sa"));
+    assertThat(propertiesService.getProperties().getProperty("password"), is(""));
+    assertThat(propertiesService.getProperties().getProperty("driver"), is("org.h2.Driver"));
     assertThat(propertiesService.getProperties().getProperty("minIdle"), is("5"));
     assertThat(propertiesService.getProperties().getProperty("maxIdle"), is("10"));
     assertThat(propertiesService.getProperties().getProperty("maxOpenPreparedStatements"), is("100"));
