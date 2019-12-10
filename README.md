@@ -1,5 +1,7 @@
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8acdd8c807344eb98a04b11de11594d9)](https://www.codacy.com/manual/a11exe/cinema?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=a11exe/cinema&amp;utm_campaign=Badge_Grade)
 # Cinema
 Movie tickets online booking system
+
 
 ![hall](https://github.com/a11exe/cinema/blob/master/cinema.gif)
 
@@ -45,6 +47,6 @@ DB connection
 
 ## Properties
 *app.properties file*
-reload.hall (true - clear database and reload seats from seats.xml, false - don't reload, save data in database)
-booking.timeout.seconds (timeout of booking until confirmation)
-admin.pass (password for admin panel)
++ reload.hall (true - clear database and reload seats from seats.xml, false - don't reload, save data in database)
++ booking.timeout.seconds (timeout of booking until confirmation)
++ admin.pass (password for admin panel)

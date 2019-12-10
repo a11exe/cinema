@@ -25,7 +25,7 @@ import ru.job4j.model.State;
  */
 public class CinemaServiceTest {
 
-  private static final CinemaService service = CinemaServiceImpl.getInstance();
+  private static final CinemaService SERVICE = CinemaServiceImpl.getInstance();
   private static final Logger LOG = LogManager.getLogger(CinemaServiceTest.class);
   private static final String SQL_INIT =
       "CREATE TABLE ACCOUNTS"
@@ -66,73 +66,88 @@ public class CinemaServiceTest {
 
   @Test
   public void getHall() {
-    assertThat(service.getHall("").getSeats().size(), is(102));
+    assertThat(SERVICE.getHall("").getSeats().size(), is(102));
   }
 
   @Test
   public void bookSeat() {
-    Seat seat = new Seat(3, 1, BigDecimal.ZERO);
+    Seat seat = new Seat.Builder()
+        .withRow(3)
+        .withNumber(1)
+        .build();
     seat.setSessionId("userOne");
-    service.bookSeat(seat);
-    assertThat(service.getHall(seat.getSessionId()).getSeats().stream()
+    SERVICE.bookSeat(seat);
+    assertThat(SERVICE.getHall(seat.getSessionId()).getSeats().stream()
         .filter(s -> (s.getRow() == seat.getRow() && s.getNumber() == seat.getNumber()))
         .findFirst().get().getState(), is(State.SELECTED));
   }
 
   @Test
   public void confirmBooking() {
-    Seat seat = new Seat(4, 1, BigDecimal.ZERO);
+    Seat seat = new Seat.Builder()
+        .withRow(4)
+        .withNumber(1)
+        .build();
     seat.setSessionId("userOne");
-    service.bookSeat(seat);
-    service.confirmBooking(seat.getSessionId(), new Account("Mike", ""));
-    assertThat(service.getHall(seat.getSessionId()).getSeats().stream()
+    SERVICE.bookSeat(seat);
+    SERVICE.confirmBooking(seat.getSessionId(), new Account("Mike", ""));
+    assertThat(SERVICE.getHall(seat.getSessionId()).getSeats().stream()
         .filter(s -> (s.getRow() == seat.getRow() && s.getNumber() == seat.getNumber()))
         .findFirst().get().getState(), is(State.BOOKED));
   }
 
   @Test
   public void readHallConfig() {
-    assertThat(service.readHallConfig(
+    assertThat(SERVICE.readHallConfig(
         CinemaServiceTest.class.getClassLoader().getResourceAsStream(
             "hall.xml")).size(), is(102));
   }
 
   @Test
   public void getBooked() {
-    Seat seat = new Seat(5, 1, BigDecimal.ZERO);
+    Seat seat = new Seat.Builder()
+        .withRow(5)
+        .withNumber(1)
+        .build();
     seat.setSessionId("userOne");
-    service.bookSeat(seat);
-    service.confirmBooking(seat.getSessionId(), new Account("Mike", ""));
-    assertThat(service.getBooked().getSeats().stream()
+    SERVICE.bookSeat(seat);
+    SERVICE.confirmBooking(seat.getSessionId(), new Account("Mike", ""));
+    assertThat(SERVICE.getBooked().getSeats().stream()
         .filter(s -> (s.getRow() == seat.getRow() && s.getNumber() == seat.getNumber()))
         .findFirst().get().getState(), is(State.BOOKED));
   }
 
   @Test
   public void cancelBooked() {
-    Seat seat = new Seat(6, 1, BigDecimal.ZERO);
+    Seat seat = new Seat.Builder()
+        .withRow(6)
+        .withNumber(1)
+        .build();
     seat.setSessionId("userOne");
-    service.bookSeat(seat);
-    service.confirmBooking(seat.getSessionId(), new Account("Mike", ""));
-    assertThat(service.getBooked().getSeats().stream()
+    SERVICE.bookSeat(seat);
+    SERVICE.confirmBooking(seat.getSessionId(), new Account("Mike", ""));
+    assertThat(SERVICE.getBooked().getSeats().stream()
         .filter(s -> (s.getRow() == seat.getRow() && s.getNumber() == seat.getNumber()))
         .findFirst().get().getState(), is(State.BOOKED));
-    service.cancelBooked(seat);
-    assertThat(service.getBooked().getSeats().stream()
+    SERVICE.cancelBooked(seat);
+    assertThat(SERVICE.getBooked().getSeats().stream()
         .filter(s -> (s.getRow() == seat.getRow() && s.getNumber() == seat.getNumber()))
         .findFirst().get().getState(), is(State.FREE));
   }
 
   @Test
   public void cancelBookSeat() {
-    Seat seat = new Seat(7, 1, BigDecimal.ZERO);
+    Seat seat = new Seat.Builder()
+        .withRow(7)
+        .withNumber(1)
+        .build();
     seat.setSessionId("userOne");
-    service.bookSeat(seat);
-    assertThat(service.getBooked().getSeats().stream()
+    SERVICE.bookSeat(seat);
+    assertThat(SERVICE.getBooked().getSeats().stream()
         .filter(s -> (s.getRow() == seat.getRow() && s.getNumber() == seat.getNumber()))
         .findFirst().get().getState(), is(State.PENDING));
-    service.cancelBookSeat(seat);
-    assertThat(service.getBooked().getSeats().stream()
+    SERVICE.cancelBookSeat(seat);
+    assertThat(SERVICE.getBooked().getSeats().stream()
         .filter(s -> (s.getRow() == seat.getRow() && s.getNumber() == seat.getNumber()))
         .findFirst().get().getState(), is(State.FREE));
   }

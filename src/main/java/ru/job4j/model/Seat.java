@@ -22,30 +22,72 @@ public class Seat {
   public Seat() {
   }
 
-  public Seat(int row, int number, BigDecimal price) {
-    this.row = row;
-    this.number = number;
-    this.price = price;
+  public Seat(Builder builder) {
+    this.id = builder.id;
+    this.row = builder.row;
+    this.number = builder.number;
+    this.price = builder.price;
+    this.sessionId = builder.sessionId;
+    this.account = builder.account;
+    this.state = builder.state;
+    this.code = builder.code;
   }
 
-  public Seat(int id, int row, int number, BigDecimal price, State state) {
-    this.id = id;
-    this.row = row;
-    this.number = number;
-    this.price = price;
-    this.state = state;
-  }
+  public static class Builder {
 
-  public Seat(int id, int row, int number, BigDecimal price, String sessionId,
-      Account account, State state, String code) {
-    this.id = id;
-    this.row = row;
-    this.number = number;
-    this.price = price;
-    this.sessionId = sessionId;
-    this.account = account;
-    this.state = state;
-    this.code = code;
+    private int id;
+    private int row;
+    private int number;
+    private BigDecimal price;
+    private String sessionId;
+    private Account account;
+    private State state;
+    private String code;
+
+    public Seat build() {
+      return new Seat(this);
+    }
+
+    public Builder withId(int id) {
+      this.id = id;
+      return this;
+    }
+
+    public Builder withRow(int row) {
+      this.row = row;
+      return this;
+    }
+
+    public Builder withNumber(int number) {
+      this.number = number;
+      return this;
+    }
+
+    public Builder withPrice(BigDecimal price) {
+      this.price = price;
+      return this;
+    }
+
+    public Builder withSessionId(String sessionId) {
+      this.sessionId = sessionId;
+      return this;
+    }
+
+    public Builder withAccount(Account account) {
+      this.account = account;
+      return this;
+    }
+
+    public Builder withState(State state) {
+      this.state = state;
+      return this;
+    }
+
+    public Builder withCode(String code) {
+      this.code = code;
+      return this;
+    }
+
   }
 
   public void setId(int id) {

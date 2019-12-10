@@ -90,7 +90,12 @@ public class CinemaServiceImpl implements CinemaService {
           int seat = Integer.valueOf(eSeat.getAttribute("number"));
           BigDecimal price = BigDecimal.valueOf(Long.valueOf(eSeat.getAttribute("price")));
           LOG.info("Seat number : " + seat);
-          seats.add(new Seat(row, seat, price));
+
+          seats.add(new Seat.Builder()
+              .withRow(row)
+              .withNumber(seat)
+              .withPrice(price)
+              .build());
         }
       }
     } catch (Exception e) {

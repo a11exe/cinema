@@ -39,7 +39,7 @@ public class SessionFilter implements Filter {
         if (newUser) {
             String sessionId = "" + Math.floor(Math.random() * 26) + LocalDateTime.now();
             Cookie ck = new Cookie("sessionId", sessionId);
-            ck.setMaxAge(60*60*24);
+            ck.setMaxAge(60 * 60 * 24);
             response.addCookie(ck);
         }
         filterChain.doFilter(servletRequest, servletResponse);

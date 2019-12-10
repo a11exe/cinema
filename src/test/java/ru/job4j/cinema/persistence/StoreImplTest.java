@@ -27,7 +27,7 @@ import ru.job4j.model.State;
  */
 public class StoreImplTest {
 
-  private static final Store store = StoreImpl.getInstance();
+  private static final Store STORE = StoreImpl.getInstance();
   private static final Logger LOG = LogManager.getLogger(StoreImplTest.class);
   private static final String SQL_INIT =
              "CREATE TABLE ACCOUNTS"
@@ -51,7 +51,7 @@ public class StoreImplTest {
 
   @BeforeClass
   public static void initDb() {
-    try (Connection connection = store.getDataSource().getConnection();
+    try (Connection connection = STORE.getDataSource().getConnection();
         PreparedStatement bookSt = connection.prepareStatement(SQL_INIT)
     ) {
       bookSt.executeUpdate();
@@ -68,88 +68,115 @@ public class StoreImplTest {
 
   @Test
   public void getDataSource() {
-    assertNotNull(store.getDataSource());
+    assertNotNull(STORE.getDataSource());
   }
 
   @Test
   public void getHall() {
-    assertThat(store.getHall("").getSeats().size(), is(102));
+    assertThat(STORE.getHall("").getSeats().size(), is(102));
   }
 
   @Test
   public void whenBookSeatThanBooked() {
-    Seat seat = new Seat(3, 1, BigDecimal.ZERO);
+    Seat seat = new Seat.Builder()
+        .withRow(3)
+        .withNumber(1)
+        .build();
     seat.setSessionId("userOne");
-    assertTrue(store.bookSeat(seat, 1));
+    assertTrue(STORE.bookSeat(seat, 1));
     seat.setSessionId("userTwo");
-    assertFalse(store.bookSeat(seat, 1));
+    assertFalse(STORE.bookSeat(seat, 1));
   }
 
   @Test
   public void whenBookAndTimeOutExpiredThanBookAgain() throws InterruptedException {
-    Seat seat = new Seat(4, 1, BigDecimal.ZERO);
+    Seat seat = new Seat.Builder()
+        .withRow(4)
+        .withNumber(1)
+        .build();
     seat.setSessionId("Bill");
-    assertTrue(store.bookSeat(seat, 1));
+    assertTrue(STORE.bookSeat(seat, 1));
     seat.setSessionId("Mike");
-    assertFalse(store.bookSeat(seat, 1));
+    assertFalse(STORE.bookSeat(seat, 1));
     TimeUnit.SECONDS.sleep(1);
-    assertTrue(store.bookSeat(seat, 1));
+    assertTrue(STORE.bookSeat(seat, 1));
   }
 
   @Test
   public void whenBookAndConfirmThanConfirmed() {
-    Seat seat1 = new Seat(1, 1, BigDecimal.ZERO);
-    Seat seat2 = new Seat(1, 2, BigDecimal.ZERO);
-    Seat seat3 = new Seat(1, 3, BigDecimal.ZERO);
+    Seat seat1 = new Seat.Builder()
+        .withRow(1)
+        .withNumber(1)
+        .build();
+    Seat seat2 = new Seat.Builder()
+        .withRow(1)
+        .withNumber(2)
+        .build();
+    Seat seat3 = new Seat.Builder()
+        .withRow(1)
+        .withNumber(3)
+        .build();
     seat1.setSessionId("userOne");
     seat2.setSessionId("userOne");
     seat3.setSessionId("userOne");
-    assertTrue(store.bookSeat(seat1, 1));
-    assertTrue(store.bookSeat(seat2, 1));
-    assertTrue(store.bookSeat(seat3, 1));
-    assertTrue(store.confirmBooking(
+    assertTrue(STORE.bookSeat(seat1, 1));
+    assertTrue(STORE.bookSeat(seat2, 1));
+    assertTrue(STORE.bookSeat(seat3, 1));
+    assertTrue(STORE.confirmBooking(
         "userOne", new Account("userOne", "89102354545"), ""));
   }
 
   @Test
   public void whenBookedThanAnotherBookFails() {
-    Seat seat1 = new Seat(2, 1, BigDecimal.ZERO);
-    Seat seat2 = new Seat(2, 2, BigDecimal.ZERO);
-    Seat seat3 = new Seat(2, 3, BigDecimal.ZERO);
+    Seat seat1 = new Seat.Builder()
+        .withRow(2)
+        .withNumber(1)
+        .build();
+    Seat seat2 = new Seat.Builder()
+        .withRow(2)
+        .withNumber(2)
+        .build();
+    Seat seat3 = new Seat.Builder()
+        .withRow(2)
+        .withNumber(3)
+        .build();
     seat1.setSessionId("userOne");
     seat2.setSessionId("userOne");
     seat3.setSessionId("userOne");
-    assertTrue(store.bookSeat(seat1, 1));
-    assertTrue(store.bookSeat(seat2, 1));
-    assertTrue(store.bookSeat(seat3, 1));
-    assertTrue(store.confirmBooking(
+    assertTrue(STORE.bookSeat(seat1, 1));
+    assertTrue(STORE.bookSeat(seat2, 1));
+    assertTrue(STORE.bookSeat(seat3, 1));
+    assertTrue(STORE.confirmBooking(
         "userOne", new Account("userOne", "89102354545"), ""));
-    assertFalse(store.bookSeat(seat1, 1));
-    assertFalse(store.bookSeat(seat2, 1));
-    assertFalse(store.bookSeat(seat3, 1));
+    assertFalse(STORE.bookSeat(seat1, 1));
+    assertFalse(STORE.bookSeat(seat2, 1));
+    assertFalse(STORE.bookSeat(seat3, 1));
   }
 
   @Test
   public void loadHall() {
-    List<Seat> seats = store.getHall("").getSeats();
+    List<Seat> seats = STORE.getHall("").getSeats();
     assertThat(seats.size(), is(102));
     List<Seat> seatsNew = new ArrayList<>();
-    store.loadHall(seatsNew);
-    assertThat(store.getHall("").getSeats().size(), is(0));
-    store.loadHall(seats);
+    STORE.loadHall(seatsNew);
+    assertThat(STORE.getHall("").getSeats().size(), is(0));
+    STORE.loadHall(seats);
     assertThat(seats.size(), is(102));
   }
 
   @Test
   public void getBooked() {
-    Seat seat = new Seat(5, 1, BigDecimal.ZERO);
+    Seat seat = new Seat.Builder()
+        .withRow(5)
+        .withNumber(1)
+        .build();
     seat.setSessionId("Bill");
-    assertTrue(store.bookSeat(seat, 1));
+    assertTrue(STORE.bookSeat(seat, 1));
     assertTrue(
-        store.confirmBooking(
+        STORE.confirmBooking(
             "Bill", new Account("Bill", "789"), "dsd"));
 
-    List<Seat> seats = store.getBooked().getSeats();
+    List<Seat> seats = STORE.getBooked().getSeats();
     boolean hasBooked = false;
     for (Seat seatDb: seats
     ) {
@@ -165,30 +192,39 @@ public class StoreImplTest {
 
   @Test
   public void cancelBooked() {
-    Seat seat = new Seat(6, 1, BigDecimal.ZERO);
+    Seat seat = new Seat.Builder()
+        .withRow(6)
+        .withNumber(1)
+        .build();
     seat.setSessionId("userOne");
-    assertTrue(store.bookSeat(seat, 1));
-    assertTrue(store.confirmBooking(
+    assertTrue(STORE.bookSeat(seat, 1));
+    assertTrue(STORE.confirmBooking(
         "userOne", new Account("userOne", "89102354545"), "dsd"));
-    assertFalse(store.bookSeat(seat, 1));
-    store.cancelBooked(seat);
-    assertTrue(store.bookSeat(seat, 1));
+    assertFalse(STORE.bookSeat(seat, 1));
+    STORE.cancelBooked(seat);
+    assertTrue(STORE.bookSeat(seat, 1));
   }
 
   @Test
   public void cancelBookSeat() {
-    Seat seatOne = new Seat(7, 1, BigDecimal.ZERO);
+    Seat seatOne = new Seat.Builder()
+        .withRow(7)
+        .withNumber(1)
+        .build();
     seatOne.setSessionId("userOne");
 
-    Seat seatTwo = new Seat(7, 1, BigDecimal.ZERO);
+    Seat seatTwo = new Seat.Builder()
+        .withRow(7)
+        .withNumber(1)
+        .build();
     seatTwo.setSessionId("userTwo");
 
-    assertTrue(store.bookSeat(seatOne, 2));
-    assertFalse(store.bookSeat(seatTwo, 2));
-    store.getHall("");
-    store.cancelBookSeat(seatOne);
-    store.getHall("");
-    assertTrue(store.bookSeat(seatTwo, 1));
+    assertTrue(STORE.bookSeat(seatOne, 2));
+    assertFalse(STORE.bookSeat(seatTwo, 2));
+    STORE.getHall("");
+    STORE.cancelBookSeat(seatOne);
+    STORE.getHall("");
+    assertTrue(STORE.bookSeat(seatTwo, 1));
   }
 
 }

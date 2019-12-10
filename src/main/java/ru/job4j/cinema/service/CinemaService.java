@@ -2,7 +2,6 @@ package ru.job4j.cinema.service;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.Properties;
 import ru.job4j.model.Account;
 import ru.job4j.model.Hall;
 import ru.job4j.model.Seat;

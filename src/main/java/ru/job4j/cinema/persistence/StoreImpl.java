@@ -77,13 +77,13 @@ public class StoreImpl implements Store {
   }
 
   private State getState(
-          Timestamp now, Timestamp booked_until, String sessionId, String bookSessionId, int account_id) {
+          Timestamp now, Timestamp bookedUntil, String sessionId, String bookSessionId, int accountId) {
 
     State state = State.FREE;
-    if (account_id > 0) {
+    if (accountId > 0) {
       state = State.BOOKED;
     } else {
-      if (booked_until != null && booked_until.getTime() > now.getTime()) {
+      if (bookedUntil != null && bookedUntil.getTime() > now.getTime()) {
         if (sessionId.equals(bookSessionId)) {
          state = State.SELECTED;
         } else {
@@ -108,20 +108,21 @@ public class StoreImpl implements Store {
     ) {
       ResultSet rs = st.executeQuery();
       while (rs.next()) {
-        seats.add(new Seat(
-            rs.getInt("id"),
-            rs.getInt("row"),
-            rs.getInt("seat_number"),
-            rs.getBigDecimal("price"),
-            getState(
+
+        seats.add(new Seat.Builder()
+            .withId(rs.getInt("id"))
+            .withRow(rs.getInt("row"))
+            .withNumber(rs.getInt("seat_number"))
+            .withPrice(rs.getBigDecimal("price"))
+            .withState(
+                getState(
                     new Timestamp(System.currentTimeMillis()),
                     rs.getTimestamp("booked_until"),
                     sessionId,
                     rs.getString("session_id"),
-                    rs.getInt("account_id")
-                    )
+                    rs.getInt("account_id")))
+            .build());
 
-        ));
       }
     } catch (Exception e) {
       LOG.error("error getSeats" + e.getMessage());
@@ -133,8 +134,8 @@ public class StoreImpl implements Store {
   public boolean bookSeat(Seat seat, int timeOutSec) {
 
     boolean result = false;
-    Timestamp book_until = new Timestamp(System.currentTimeMillis());
-    book_until.setTime(book_until.getTime() + TimeUnit.SECONDS.toMillis(timeOutSec));
+    Timestamp bookUntil = new Timestamp(System.currentTimeMillis());
+    bookUntil.setTime(bookUntil.getTime() + TimeUnit.SECONDS.toMillis(timeOutSec));
 
     try (Connection connection = SOURCE.getConnection();
         PreparedStatement bookSt = connection.prepareStatement(SQL_BOOKING)
@@ -143,7 +144,7 @@ public class StoreImpl implements Store {
       connection.setAutoCommit(false);
 
       bookSt.setString(1, seat.getSessionId());
-      bookSt.setTimestamp(2, book_until);
+      bookSt.setTimestamp(2, bookUntil);
       bookSt.setInt(3, seat.getRow());
       bookSt.setInt(4, seat.getNumber());
       bookSt.setString(5, seat.getSessionId());
@@ -246,26 +247,29 @@ public class StoreImpl implements Store {
     ) {
       ResultSet rs = st.executeQuery();
       while (rs.next()) {
-        seats.add(new Seat(
-            rs.getInt("id"),
-            rs.getInt("row"),
-            rs.getInt("seat_number"),
-            rs.getBigDecimal("price"),
-            rs.getString("session_id"),
-            new Account(
+
+        seats.add(new Seat.Builder()
+            .withId(rs.getInt("id"))
+            .withRow(rs.getInt("row"))
+            .withNumber(rs.getInt("seat_number"))
+            .withPrice(rs.getBigDecimal("price"))
+            .withSessionId(rs.getString("session_id"))
+            .withAccount(new Account(
                 rs.getInt("account_id"),
                 rs.getString("fio"),
                 rs.getString("phone")
-            ),
-            getState(
-                new Timestamp(System.currentTimeMillis()),
-                rs.getTimestamp("booked_until"),
-                "",
-                rs.getString("session_id"),
-                rs.getInt("account_id")
-            ),
-            rs.getString("code")
-        ));
+            ))
+            .withState(
+                getState(
+                    new Timestamp(System.currentTimeMillis()),
+                    rs.getTimestamp("booked_until"),
+                    "",
+                    rs.getString("session_id"),
+                    rs.getInt("account_id")
+                ))
+            .withCode(rs.getString("code"))
+            .build());
+
       }
     } catch (Exception e) {
       LOG.error("error getBooked" + e.getMessage());
