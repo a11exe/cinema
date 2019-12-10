@@ -1,6 +1,8 @@
 # Cinema
 Movie tickets online booking system
 
+![hall](https://github.com/a11exe/cinema/blob/master/cinema.gif)
+
 The task is:
 
 Build a online booking system for cinema.
@@ -8,7 +10,7 @@ Build a online booking system for cinema.
  * 2 types of users: admin and regular users
  * Admin can see all bookings and  cancel them.
  * Admin can creates the seats configuration in a seats.xml file.
- * Users can book seat in the seats.
+ * Users can select seat for booking.
  * After selecting a seat, the user must confirm the booking within 5 minutes.
  * After confirming the reservation, the user receives a booking code.
     
@@ -23,6 +25,7 @@ Build a online booking system for cinema.
 + log4j
 + Ajax JSON
 + XML DOM
++ JUnit
 
 ## Install
 
