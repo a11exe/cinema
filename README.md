@@ -22,6 +22,7 @@ Build a online booking system for cinema.
 + Maven
 + Servlet 4
 + Jetty
++ JDBC
 + Liquibase
 + DBs: H2
 + log4j
